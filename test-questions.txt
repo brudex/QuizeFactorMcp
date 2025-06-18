@@ -1,0 +1,22 @@
+Question 1: What three attributes describe an Application Load Balancer (ALB)?
+
+Options:
+A) dynamic port mapping
+B) SSL listener
+C) layer 7 load balancer
+D) backend server authentication
+E) multi-region forwarding
+
+Correct Answer: A,C
+Explanation: An Application Load Balancer (ALB) is characterized by dynamic port mapping and being a layer 7 load balancer.
+
+Question 2: What enables load balancing between multiple applications per load balancer?
+
+Options:
+A) listeners
+B) sticky sessions
+C) path-based routing
+D) backend server authentication
+
+Correct Answer: C
+Explanation: Path-based routing allows a single load balancer to route traffic to different applications based on the URL path. 
