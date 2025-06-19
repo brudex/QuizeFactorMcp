@@ -562,3 +562,13 @@ curl -X POST http://localhost:3000/api/translate/question/your-question-uuid \
    - Verify language codes
 
 [... rest of existing content ...] 
+
+
+// Translation routes
+router.post('/category/:categoryUuid', translateCategory);
+router.post('/course/:courseUuid', translateCourse);
+router.post('/quiz/:quizUuid', translateQuiz);
+router.post('/quiz/:quizUuid/questions', translateQuestions);
+
+// Question extraction and translation routes
+router.post('/quiz/:quizUuid/extract', uploadAny, extractQuestions);

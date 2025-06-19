@@ -355,39 +355,39 @@ export const translateExtractedQuestions = async (req, res) => {
   }
 };
 
-export const translateQuestion = async (req, res) => {
-  try {
-    const { questionUuid } = req.params;
-    const { targetLanguages } = req.body;
+// export const translateQuestion = async (req, res) => {
+//   try {
+//     const { questionUuid } = req.params;
+//     const { targetLanguages } = req.body;
 
-    if (
-      !targetLanguages ||
-      !Array.isArray(targetLanguages) ||
-      targetLanguages.length === 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid request",
-        message: "Please provide an array of target languages",
-      });
-    }
+//     if (
+//       !targetLanguages ||
+//       !Array.isArray(targetLanguages) ||
+//       targetLanguages.length === 0
+//     ) {
+//       return res.status(400).json({
+//         success: false,
+//         error: "Invalid request",
+//         message: "Please provide an array of target languages",
+//       });
+//     }
 
-    const translations = await translationService.translateQuestion(
-      questionUuid,
-      targetLanguages
-    );
+//     const translations = await translationService.translateQuestion(
+//       questionUuid,
+//       targetLanguages
+//     );
 
-    res.status(200).json({
-      success: true,
-      message: "Question translated successfully",
-      data: { translations },
-    });
-  } catch (error) {
-    const formattedError = formatControllerError(error, "Question Translation");
-    res.status(formattedError.status).json({
-      success: false,
-      error: formattedError.error,
-      message: formattedError.message,
-    });
-  }
-};
+//     res.status(200).json({
+//       success: true,
+//       message: "Question translated successfully",
+//       data: { translations },
+//     });
+//   } catch (error) {
+//     const formattedError = formatControllerError(error, "Question Translation");
+//     res.status(formattedError.status).json({
+//       success: false,
+//       error: formattedError.error,
+//       message: formattedError.message,
+//     });
+//   }
+// };

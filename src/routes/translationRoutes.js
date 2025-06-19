@@ -4,7 +4,7 @@ import {
   translateCourse, 
   translateQuiz, 
   translateQuestions, 
-  translateQuestion,
+  // translateQuestion,
   extractQuestions,
   translateExtractedQuestions 
 } from '../controllers/translationController.js';
@@ -17,7 +17,7 @@ router.post('/category/:categoryUuid', translateCategory);
 router.post('/course/:courseUuid', translateCourse);
 router.post('/quiz/:quizUuid', translateQuiz);
 router.post('/quiz/:quizUuid/questions', translateQuestions);
-router.post('/question/:questionUuid', translateQuestion);
+// router.post('/question/:questionUuid', translateQuestion);
 
 // Question extraction and translation routes
 router.post('/quiz/:quizUuid/extract', uploadAny, extractQuestions);
