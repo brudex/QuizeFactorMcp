@@ -28,6 +28,7 @@ export const config = {
 
   // LLM Configuration
   llm: {
+    defaultProvider: process.env.DEFAULT_LLM_PROVIDER || "anthropic", // can be "anthropic" or "openai"
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY,
       model: process.env.ANTHROPIC_MODEL || "claude-3-sonnet-20240229",
@@ -36,7 +37,7 @@ export const config = {
     },
     openai: {
       apiKey: process.env.OPENAI_API_KEY,
-      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      model: process.env.OPENAI_MODEL || "gpt-3.5-turbo",
       enabled: !!process.env.OPENAI_API_KEY,
     },
   },

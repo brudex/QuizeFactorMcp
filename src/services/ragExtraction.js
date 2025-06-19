@@ -1,21 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config/config.js";
+import llmService from "./llmService.js";
 
 class RAGExtraction {
   constructor() {
-    // Initialize LLM clients
-    if (config.llm.anthropic.enabled) {
-      this.anthropic = new Anthropic({
-        apiKey: config.llm.anthropic.apiKey,
-        apiVersion: "2023-06-01"  // Add API version
-      });
-    }
-
-    if (!config.llm.anthropic.enabled) {
-      throw new Error(
-        "Anthropic API key is required. Please provide it in the .env file."
-      );
-    }
+    // No need to initialize LLM clients here anymore
   }
 
   async extractQuestions(text) {
@@ -97,30 +85,12 @@ ${text}
 Return only the JSON array, no other text.`;
 
     try {
-      try {
-        const response = await this.anthropic.messages.create({
-          model: config.llm.anthropic.model,
-          max_tokens: 4096,
-          temperature: 0,
-          messages: [
-            { role: "user", content: prompt }
-          ]
-        });
+      const response = await llmService.processPrompt(prompt, {
+        maxTokens: 4096,
+        temperature: 0
+      });
 
-        return this.parseResponse(response.content[0].text);
-      } catch (error) {
-        console.warn("Error with primary Anthropic model, trying fallback:", error.message);
-        const response = await this.anthropic.messages.create({
-          model: config.llm.anthropic.fallbackModel,
-          max_tokens: 4096,
-          temperature: 0,
-          messages: [
-            { role: "user", content: prompt }
-          ]
-        });
-
-        return this.parseResponse(response.content[0].text);
-      }
+      return this.parseResponse(response);
     } catch (error) {
       console.error("Error processing chunk with LLM:", error);
       throw error; // Propagate error to handle retry with smaller chunks
@@ -321,16 +291,12 @@ ${JSON.stringify(questions, null, 2)}
 Return only the JSON object, no other text.`;
 
     try {
-      const response = await this.anthropic.messages.create({
-        model: config.llm.anthropic.model,
-        max_tokens: 1000,
-        temperature: 0,
-        messages: [
-          { role: "user", content: prompt }
-        ]
+      const response = await llmService.processPrompt(prompt, {
+        maxTokens: 1000,
+        temperature: 0
       });
 
-      const categoryInfo = JSON.parse(response.content[0].text);
+      const categoryInfo = JSON.parse(response);
       console.log('Category determined:', categoryInfo);
       return categoryInfo;
     } catch (error) {

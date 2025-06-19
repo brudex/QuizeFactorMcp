@@ -13,6 +13,7 @@ This project provides functionality to translate questions, quizzes, courses, an
 - Automatic format standardization (A/B/C/D to first/second/third/fourth)
 - Extract questions from PDF, DOC/DOCX, and EPUB files
 - Save extracted questions to a local database
+- Support for multiple LLM providers (Anthropic Claude and OpenAI GPT)
 
 ## Setup
 
@@ -28,7 +29,13 @@ PORT=3000
 UPLOAD_DIR=./uploads
 QUIZ_FACTOR_API_URL=https://quizefactor.cachetechs.com
 QUIZ_FACTOR_API_KEY=your_api_key_here
-ANTHROPIC_API_KEY=your_anthropic_api_key_here  # For AI translations
+
+# LLM Configuration
+DEFAULT_LLM_PROVIDER=anthropic  # or "openai" (defaults to "anthropic")
+ANTHROPIC_API_KEY=your_anthropic_api_key_here  # Required if using Anthropic
+ANTHROPIC_MODEL=claude-3-sonnet-20240229  # Optional, defaults to claude-3-sonnet-20240229
+OPENAI_API_KEY=your_openai_api_key_here  # Required if using OpenAI
+OPENAI_MODEL=gpt-3.5-turbo  # Optional, defaults to gpt-3.5-turbo
 ```
 
 3. Create required directories:
@@ -40,6 +47,22 @@ mkdir -p uploads test-files
 ```bash
 npm start
 ```
+
+## LLM Provider Configuration
+
+The system supports two LLM providers:
+
+1. Anthropic Claude
+   - Set `DEFAULT_LLM_PROVIDER=anthropic`
+   - Requires `ANTHROPIC_API_KEY`
+   - Optional: Set `ANTHROPIC_MODEL` (defaults to claude-3-sonnet-20240229)
+
+2. OpenAI GPT
+   - Set `DEFAULT_LLM_PROVIDER=openai`
+   - Requires `OPENAI_API_KEY`
+   - Optional: Set `OPENAI_MODEL` (defaults to gpt-3.5-turbo)
+
+You can configure both providers and switch between them by changing `DEFAULT_LLM_PROVIDER`. If the default provider is not available, the system will automatically fall back to any available provider.
 
 ## Translation API Endpoints
 
@@ -96,7 +119,7 @@ Request body:
 {
   "targetLanguages": ["es", "fr"],
   "preserveExisting": true,
-  "questionUuids": ["uuid1", "uuid2"]  // Optional, translate specific questions only
+  "provider": "openai"  // Optional: specify LLM provider for this request
 }
 ```
 

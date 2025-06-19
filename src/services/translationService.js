@@ -2,6 +2,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { QuizFactorApiService } from "./quizFactorApiService.js";
 import { config } from "../config/config.js";
+import llmService from './llmService.js';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -18,16 +19,6 @@ export class TranslationService {
       },
       timeout: 30000,
     });
-
-    // Initialize Anthropic client
-    this.llmClient = axios.create({
-      baseURL: 'https://api.anthropic.com',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': config.llm.anthropic.apiKey,
-        'anthropic-version': '2023-06-01'
-      }
-    });
   }
 
   async translateWithLLM(text, targetLanguage, context = "", maxRetries = 3) {
@@ -41,19 +32,13 @@ export class TranslationService {
 Context: ${context}
 Text to translate: "${text}"`;
 
-        const response = await this.llmClient.post("/v1/messages", {
-          model: config.llm.anthropic.model,
-          max_tokens: 1024,
-          messages: [
-            {
-              role: "user",
-              content: prompt,
-            },
-          ],
+        const translatedText = await llmService.processPrompt(prompt, {
+          maxTokens: 1024,
+          temperature: 0
         });
 
         // Clean up the response by removing common prefixes and trimming
-        let translatedText = response.data.content[0].text.trim();
+        let cleanedText = translatedText.trim();
         const prefixesToRemove = [
           `Here's the ${targetLanguage} translation:`,
           `The ${targetLanguage} translation is:`,
@@ -64,26 +49,21 @@ Text to translate: "${text}"`;
 
         // Remove any known prefixes
         for (const prefix of prefixesToRemove) {
-          if (translatedText.toLowerCase().startsWith(prefix.toLowerCase())) {
-            translatedText = translatedText.slice(prefix.length).trim();
+          if (cleanedText.toLowerCase().startsWith(prefix.toLowerCase())) {
+            cleanedText = cleanedText.slice(prefix.length).trim();
           }
         }
 
         // Remove any quotes if they wrap the entire text
-        if (translatedText.startsWith('"') && translatedText.endsWith('"')) {
-          translatedText = translatedText.slice(1, -1).trim();
+        if (cleanedText.startsWith('"') && cleanedText.endsWith('"')) {
+          cleanedText = cleanedText.slice(1, -1).trim();
         }
 
-        return translatedText;
+        return cleanedText;
       } catch (error) {
-        console.error("Translation error:", {
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message
-        });
+        console.error("Translation error:", error);
 
-        if (error.response?.status === 429) {
+        if (error.message.includes('Rate limit') || error.message.includes('429')) {
           retries++;
           // Exponential backoff with jitter
           const jitter = Math.random() * 1000;
@@ -856,23 +836,13 @@ Text to translate: "${text}"`;
       
       // Initial quota check
       try {
-        const testResponse = await this.llmClient.post("/v1/messages", {
-          model: config.llm.anthropic.model,
-          max_tokens: 100,
-          messages: [{ role: "user", content: "test" }]
-        });
+        await llmService.processPrompt("test", { maxTokens: 100 });
         console.log("API connection test successful");
       } catch (quotaError) {
-        console.error("API Quota/Connection Test Error:", {
-          status: quotaError.response?.status,
-          statusText: quotaError.response?.statusText,
-          data: quotaError.response?.data,
-          message: quotaError.message
-        });
+        console.error("API Quota/Connection Test Error:", quotaError);
         
-        if (quotaError.response?.status === 402 || 
-            quotaError.message.includes('credit balance is too low')) {
-          throw new Error("Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.");
+        if (quotaError.message.includes('credit balance is too low')) {
+          throw new Error("Your credit balance is too low. Please check your API credits.");
         }
         throw quotaError;
       }
@@ -881,62 +851,71 @@ Text to translate: "${text}"`;
       for (let i = 0; i < chunks.length; i++) {
         try {
           console.log(`Processing chunk ${i + 1}/${chunks.length} (length: ${chunks[i].length})`);
-          console.log("Sending prompt to LLM for chunk", i + 1);
           
-          const response = await this.llmClient.post("/v1/messages", {
-            model: config.llm.anthropic.model,
-            max_tokens: 4000,
-            temperature: 0,
-            system: "You are an expert at extracting multiple choice questions from text and formatting them as JSON. You will extract questions exactly as they appear, preserving all technical terms and formatting options as option_1, option_2, etc.",
-            messages: [{
-              role: "user",
-              content: `Extract multiple choice questions from the following text. Each question must have:\n1. A clear question text\n2. Multiple choice options labeled as option_1, option_2, etc.\n3. A single correct answer specified as "option_X"\n4. An explanation for the correct answer\n\nFormat each question as a JSON object with this exact structure:\n{\n  "questionText": "the complete question text",\n  "options": {\n    "option_1": "first option text",\n    "option_2": "second option text",\n    "option_3": "third option text",\n    "option_4": "fourth option text"\n  },\n  "correctAnswer": "option_X",\n  "explanation": "detailed explanation of why this is the correct answer"\n}\n\nImportant:\n1. Extract ALL questions from this text\n2. Include all options exactly as they appear\n3. Make sure options are labeled as option_1, option_2, etc.\n4. Ensure correctAnswer matches one of the option keys\n5. Always include an explanation\n6. Make sure the JSON is properly formatted\n\nText to process:\n${chunks[i]}\n\nReturn ONLY a valid JSON array of question objects, with no additional text.`
-            }]
+          const prompt = `Extract multiple choice questions from the following text. Each question must have:
+1. A clear question text
+2. Multiple choice options labeled as option_1, option_2, etc.
+3. A single correct answer specified as "option_X"
+4. An explanation for the correct answer
+
+Format each question as a JSON object with this exact structure:
+{
+  "questionText": "the complete question text",
+  "options": {
+    "option_1": "first option text",
+    "option_2": "second option text",
+    "option_3": "third option text",
+    "option_4": "fourth option text"
+  },
+  "correctAnswer": "option_X",
+  "explanation": "detailed explanation of why this is the correct answer"
+}
+
+Important:
+1. Extract ALL questions from this text
+2. Include all options exactly as they appear
+3. Make sure options are labeled as option_1, option_2, etc.
+4. Ensure correctAnswer matches one of the option keys
+5. Always include an explanation
+6. Make sure the JSON is properly formatted
+
+Text to process:
+${chunks[i]}
+
+Return ONLY a valid JSON array of question objects, with no additional text.`;
+
+          const response = await llmService.processPrompt(prompt, {
+            maxTokens: 4000,
+            temperature: 0
           });
 
-          // Log the raw response for debugging
-          console.log("Raw LLM response:", JSON.stringify(response.data, null, 2));
-
-          if (response.data && response.data.content && Array.isArray(response.data.content)) {
-            const content = response.data.content[0];
-            if (content && content.text) {
-              try {
-                // Clean up the response text
-                let responseText = content.text.trim();
-                if (!responseText.startsWith('[')) {
-                  const startBracket = responseText.indexOf('[');
-                  if (startBracket !== -1) {
-                    responseText = responseText.substring(startBracket);
-                  }
-                }
-                if (!responseText.endsWith(']')) {
-                  const endBracket = responseText.lastIndexOf(']');
-                  if (endBracket !== -1) {
-                    responseText = responseText.substring(0, endBracket + 1);
-                  }
-                }
-
-                const questions = JSON.parse(responseText);
-                if (Array.isArray(questions)) {
-                  console.log(`Parsed ${questions.length} questions from chunk ${i + 1}`);
-                  allQuestions = allQuestions.concat(questions);
-                }
-              } catch (parseError) {
-                console.error("Error parsing LLM response:", parseError);
-                console.error("Response text:", content.text);
+          try {
+            // Clean up the response text
+            let responseText = response.trim();
+            if (!responseText.startsWith('[')) {
+              const startBracket = responseText.indexOf('[');
+              if (startBracket !== -1) {
+                responseText = responseText.substring(startBracket);
               }
             }
-          } else {
-            console.error("Unexpected response format:", response.data);
-          }
+            if (!responseText.endsWith(']')) {
+              const endBracket = responseText.lastIndexOf(']');
+              if (endBracket !== -1) {
+                responseText = responseText.substring(0, endBracket + 1);
+              }
+            }
 
+            const questions = JSON.parse(responseText);
+            if (Array.isArray(questions)) {
+              console.log(`Parsed ${questions.length} questions from chunk ${i + 1}`);
+              allQuestions = allQuestions.concat(questions);
+            }
+          } catch (parseError) {
+            console.error("Error parsing LLM response:", parseError);
+            console.error("Response text:", response);
+          }
         } catch (error) {
           console.error(`Error processing chunk ${i + 1}:`, error);
-          console.error("Error response:", {
-            status: error.response?.status,
-            data: error.response?.data,
-            headers: error.response?.headers
-          });
         }
       }
 
@@ -947,7 +926,6 @@ Text to translate: "${text}"`;
       }
 
       return allQuestions;
-
     } catch (error) {
       console.error("Question extraction error:", error);
       throw error;
@@ -1167,25 +1145,14 @@ Text to translate: "${text}"`;
       const prompt = `Please analyze the following text and detect its language. Return only the ISO 639-1 language code.
 Text: "${text}"`;
 
-      const response = await this.llmClient.post("/v1/messages", {
-        model: config.llm.anthropic.model,
-        max_tokens: 128,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+      const response = await llmService.processPrompt(prompt, {
+        maxTokens: 128,
+        temperature: 0
       });
 
-      return [response.data.content[0].text.trim()];
+      return [response.trim()];
     } catch (error) {
-      console.error("Language detection error:", {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        message: error.message
-      });
+      console.error("Language detection error:", error);
       throw new Error(`Failed to detect languages: ${error.message}`);
     }
   }
