@@ -1,8 +1,10 @@
 import Question from '../models/Question.js';
 import documentProcessor from '../services/documentProcessor.js';
 import quizFactorApiService from '../services/quizFactorApiService.js';
+import { TranslationService } from '../services/translationService.js';
 import path from 'path';
 import { config } from '../config/config.js';
+import fs from 'fs';
 
 const formatControllerError = (error, context) => {
   return {
@@ -46,7 +48,7 @@ export const uploadDocument = async (req, res) => {
     let questions = [];
 
     try {
-      // Extract questions from document
+      // Extract questions from document using LLM
       console.log('📝 Processing document...');
       switch (fileType) {
         case '.pdf':
@@ -58,6 +60,11 @@ export const uploadDocument = async (req, res) => {
           break;
         case '.epub':
           questions = await documentProcessor.processEPUB(req.file.path);
+          break;
+        case '.txt':
+          const textContent = await fs.promises.readFile(req.file.path, 'utf8');
+          const translationService = new TranslationService();
+          questions = await translationService.extractQuestions(textContent);
           break;
         default:
           return res.status(400).json({ 
@@ -190,6 +197,17 @@ export const uploadDocument = async (req, res) => {
       }
       
     } catch (processingError) {
+      // Handle credit balance error
+      if (processingError.message.includes('credit balance is too low')) {
+        return res.status(402).json({
+          success: false,
+          error: 'Payment Required',
+          message: processingError.message,
+          code: 'INSUFFICIENT_CREDITS',
+          timestamp: new Date().toISOString()
+        });
+      }
+
       const formattedError = logControllerError(processingError, 'Document Processing');
       return res.status(422).json({ 
         success: false,

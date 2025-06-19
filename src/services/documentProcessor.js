@@ -5,8 +5,8 @@ import mammoth from 'mammoth';
 import EPub from 'epub';
 import fs from 'fs/promises';
 import path from 'path';
-import ragExtraction from './ragExtraction.js';
 import { v4 as uuidv4 } from 'uuid';
+import translationService from './translationService.js';
 
 class DocumentProcessor {
   async processPDF(filePath) {
@@ -16,7 +16,7 @@ class DocumentProcessor {
       const data = await pdfParse(dataBuffer);
       console.log("PDF text length:", data.text.length);
       console.log("First 200 characters:", data.text.substring(0, 200));
-      return this.extractQuestions(data.text);
+      return translationService.extractQuestionsWithLLM(data.text);
     } catch (error) {
       console.error("PDF processing error:", error);
       throw new Error(`Failed to process PDF: ${error.message}`);
@@ -50,7 +50,7 @@ class DocumentProcessor {
       const result = await mammoth.extractRawText({ path: filePath });
       console.log("DOC text length:", result.value.length);
       console.log("First 200 characters:", result.value.substring(0, 200));
-      return this.extractQuestions(result.value);
+      return translationService.extractQuestionsWithLLM(result.value);
     } catch (error) {
       console.error("DOC processing error:", error);
       throw new Error(`Failed to process DOC: ${error.message}`);
@@ -67,7 +67,7 @@ class DocumentProcessor {
             const chapter = await this.getEpubChapter(epub, epub.flow[i].id);
             content += chapter + '\n';
           }
-          resolve(this.extractQuestions(content));
+          resolve(translationService.extractQuestionsWithLLM(content));
         } catch (error) {
           reject(new Error(`Failed to process EPUB: ${error.message}`));
         }

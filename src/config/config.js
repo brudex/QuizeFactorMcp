@@ -34,12 +34,18 @@ export const config = {
       fallbackModel: "claude-3-5-sonnet-20241022",
       enabled: !!process.env.ANTHROPIC_API_KEY,
     },
+    openai: {
+      apiKey: process.env.OPENAI_API_KEY,
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      enabled: !!process.env.OPENAI_API_KEY,
+    },
   },
 
   // File Configuration
   files: {
     upload: {
       maxSize: parseInt(process.env.MAX_FILE_SIZE || "10485760", 10), // 10MB
+      uploadDir: resolveProjectPath("./uploads"),
       allowedTypes: [
         "application/pdf",
         "application/msword",
@@ -47,7 +53,7 @@ export const config = {
         "application/epub+zip",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "text/csv",
-        
+        "text/plain"
       ],
     },
   },
@@ -62,6 +68,7 @@ export const config = {
       "application/epub+zip",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "text/csv",
+      "text/plain"
     ],
   },
 

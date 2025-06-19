@@ -246,8 +246,9 @@ export const extractQuestions = async (req, res) => {
           fileContent = await documentProcessor.processEPUB(file.path);
           break;
         case '.txt':
-          // For text files, just read the content directly
-          fileContent = await fs.readFile(file.path, 'utf8');
+          // For text files, read content and use LLM extraction
+          const textContent = await fs.readFile(file.path, 'utf8');
+          fileContent = await translationService.extractQuestionsWithLLM(textContent);
           break;
         default:
           return res.status(400).json({

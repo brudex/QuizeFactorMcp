@@ -3,7 +3,7 @@ import { config } from '../config/config.js';
 import { v4 as uuidv4 } from 'uuid';
 import ragExtraction from './ragExtraction.js';
 
-class QuizFactorApiService {
+export class QuizFactorApiService {
   constructor() {
     this.apiBaseUrl = config.api.quizFactor.baseUrl;
     
@@ -275,72 +275,33 @@ class QuizFactorApiService {
     }
   }
 
-  async addQuestionsToQuiz(quizUuid, questions, metadata = {}) {
+  async addQuestionsToQuiz(payload) {
     try {
-      if (!quizUuid) {
-        throw new Error('Quiz UUID is required to add questions');
-      }
-
-      console.log(`\n=== Formatting ${questions.length} Questions ===`);
-      const formattedQuestions = questions.map(question => {
-        const questionType = question.options && question.options.length > 0 ? 
-          (Array.isArray(question.correctAnswer) ? 'multi-choice' : 'single-choice') : 
-          'text';
-        
-        const options = {};
-        if (question.options && question.options.length > 0) {
-          question.options.forEach((opt, index) => {
-            const optionKey = `option_${index + 1}`;
-            options[optionKey] = opt.text;
-            if (opt.isCorrect) {
-              question.correctOption = optionKey;
-            }
-          });
-        }
-        
-        return {
-          questionType,
-          difficulty: question.metadata?.difficulty || metadata.difficulty || 'medium',
-          points: question.points || 1,
-          translations: [
-            {
-              languageCode: 'en',
-              questionText: question.content,
-              options,
-              correctAnswer: question.correctOption || question.correctAnswer || '',
-              explanation: question.explanation || ''
-            }
-          ]
-        };
-      });
-
-      const questionsPayload = {
-        quizUuid,
-        questions: formattedQuestions
-      };
-
-      console.log('\n=== Adding Questions to Quiz ===');
-      console.log('Questions payload:', JSON.stringify(questionsPayload, null, 2));
+      console.log(`Adding ${payload.questions.length} questions to quiz ${payload.quizUuid}`);
       
-      try {
-        const response = await this.client.post('/api/ai/add-quiz-questions', questionsPayload);
-        console.log('✅ Questions added successfully:', JSON.stringify(response.data, null, 2));
-        
-        // Extract questions from nested response
-        const result = response.data?.data?.questions || response.data;
-        if (!result) {
-          throw new Error('Invalid questions response format');
-        }
-        return result;
-      } catch (error) {
-        if (error.response?.status === 404) {
-          throw new Error(`Quiz not found with UUID: ${quizUuid}`);
-        }
-        throw error;
+      const response = await this.client.post(
+        '/api/ai/add-quiz-questions',
+        payload
+      );
+      
+      if (!response.data) {
+        throw new Error('Failed to add questions to quiz: No response data');
       }
+
+      // Extract questions from nested response
+      const result = response.data?.data?.questions || response.data;
+      if (!result) {
+        throw new Error('Invalid questions response format');
+      }
+      
+      console.log(`Successfully added ${payload.questions.length} questions to quiz ${payload.quizUuid}`);
+      return result;
     } catch (error) {
-      const formattedError = this.logError(error, 'Adding Questions to Quiz');
-      throw new Error(formattedError.message);
+      console.error('Error adding questions to quiz:', error.response?.data || error.message);
+      if (error.response?.status === 404) {
+        throw new Error(`Quiz not found with UUID: ${payload.quizUuid}`);
+      }
+      throw new Error(`Failed to add questions to quiz: ${error.message}`);
     }
   }
 
@@ -411,7 +372,7 @@ class QuizFactorApiService {
 
   async updateQuizQuestions(quizUuid, questions) {
     try {
-      const response = await this.client.post('/api/ai/update-quiz-questions', {
+      const response = await this.client.post('/api/ai/add-quiz-questions', {
         quizUuid,
         questions
       });
@@ -428,4 +389,6 @@ class QuizFactorApiService {
   }
 }
 
-export default new QuizFactorApiService(); 
+// Create and export a default instance
+const defaultInstance = new QuizFactorApiService();
+export default defaultInstance; 
