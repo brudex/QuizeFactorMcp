@@ -20,26 +20,26 @@ This API provides endpoints for translating educational content (categories, cou
 
 1. **Translate Category**
 ```http
-POST /category/:categoryUuid
+POST /api/translate/category/:categoryUuid
 ```
 Translates a category's content to specified languages.
 
 2. **Translate Course**
 ```http
-POST /course/:courseUuid
+POST /api/translate/course/:courseUuid
 ```
 Translates a course's content to specified languages.
 
 3. **Translate Quiz**
 ```http
-POST /quiz/:quizUuid
+POST /api/translate/quiz/:quizUuid
 ```
 Translates a quiz's title and description to specified languages.
 
 ### Question Extraction Endpoint
 
 ```http
-POST /quiz/:quizUuid/extract
+POST /api/translate/quiz/:quizUuid/extract
 ```
 Extracts questions from uploaded documents and adds them to a specified quiz.
 
