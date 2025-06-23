@@ -74,19 +74,35 @@ export const translateCategory = async (req, res) => {
     // Extract language codes from the languages response
     const targetLanguages = languages.map((lang) => lang.code);
 
-    const translations = await translationService.translateCategory(
-      categoryUuid,
-      targetLanguages
-    );
-
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Category translated successfully",
+      message: "Translation processing started in the background",
       data: {
-        translations,
+        status: "processing",
+        categoryUuid,
         targetLanguages,
       },
     });
+
+    // Process translations in background
+    (async () => {
+      try {
+        const result = await translationService.translateCategory(
+          categoryUuid,
+          targetLanguages
+        );
+
+        console.log("Category translated successfully:", {
+          categoryUuid,
+          targetLanguages,
+          translationsCreated: result ? Object.keys(result).length : 0
+        });
+      } catch (error) {
+        console.error("Background category translation error:", error);
+      }
+    })();
+
   } catch (error) {
     console.error("Translation Error:", error);
     const formattedError = formatControllerError(error, "Category Translation");
@@ -115,14 +131,34 @@ export const translateCourse = async (req, res) => {
 
     // Extract language codes from the languages response
     const targetLanguages = languages.map(lang => lang.code);
-   
-    const result = await translationService.translateCourse(courseUuid, targetLanguages);
 
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Course translated successfully",
-      data: result
+      message: "Translation processing started in the background",
+      data: {
+        status: "processing",
+        courseUuid,
+        targetLanguages,
+      },
     });
+
+    // Process translations in background
+    (async () => {
+      try {
+        const result = await translationService.translateCourse(courseUuid, targetLanguages);
+
+        console.log("Course translated successfully:", {
+          courseUuid,
+          targetLanguages,
+          translationsCreated: result ? Object.keys(result).length : 0
+        });
+
+      } catch (error) {
+        console.error("Background course translation error:", error);
+      }
+    })();
+
   } catch (error) {
     const formattedError = formatControllerError(error, "Course Translation");
     res.status(formattedError.status).json({
@@ -151,13 +187,33 @@ export const translateQuiz = async (req, res) => {
     // Extract language codes from the languages response
     const targetLanguages = languages.map(lang => lang.code);
 
-    const result = await translationService.translateQuiz(quizUuid, targetLanguages);
-
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Quiz translated successfully",
-      data: result,
+      message: "Translation processing started in the background",
+      data: {
+        quizUuid,
+        targetLanguages,
+        status: "processing"
+      },
     });
+
+    // Process translations in background
+    (async () => {
+      try {
+        const result = await translationService.translateQuiz(quizUuid, targetLanguages);
+
+        console.log("Quiz translated successfully:", {
+          quizUuid,
+          targetLanguages,
+          translationsCreated: result ? Object.keys(result).length : 0
+        });
+
+      } catch (error) {
+        console.error("Background quiz translation error:", error);
+      }
+    })();
+
   } catch (error) {
     console.error("Quiz translation error:", error);
     const formattedError = formatControllerError(error, "Quiz Translation");
@@ -190,17 +246,39 @@ export const translateQuestions = async (req, res) => {
       });
     }
 
-    const result = await translationService.translateQuestions(
-      quizUuid,
-      targetLanguages,
-      questions
-    );
-
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Questions translated successfully",
-      data: result,
+      message: "Translation processing started in the background",
+      data: {
+        quizUuid,
+        targetLanguages,
+        questionsCount: questions.length,
+        status: "processing"
+      },
     });
+
+    // Process translations in background
+    (async () => {
+      try {
+        const result = await translationService.translateQuestions(
+          quizUuid,
+          targetLanguages,
+          questions
+        );
+
+        console.log("Questions translated successfully:", {
+          quizUuid,
+          targetLanguages,
+          questionsTranslated: questions.length,
+          translationsCreated: result.length
+        });
+
+      } catch (error) {
+        console.error("Background translation error:", error);
+      }
+    })();
+
   } catch (error) {
     const formattedError = formatControllerError(
       error,
@@ -228,60 +306,72 @@ export const extractQuestions = async (req, res) => {
       });
     }
 
-    // Get file extension
-    const fileExt = path.extname(file.originalname).toLowerCase();
-
-    // Process file based on type
-    let fileContent;
-    try {
-      switch (fileExt) {
-        case '.pdf':
-          fileContent = await documentProcessor.processPDF(file.path);
-          break;
-        case '.docx':
-        case '.doc':
-          fileContent = await documentProcessor.processDOC(file.path);
-          break;
-        case '.epub':
-          fileContent = await documentProcessor.processEPUB(file.path);
-          break;
-        case '.txt':
-          // For text files, read content and use LLM extraction
-          const textContent = await fs.readFile(file.path, 'utf8');
-          fileContent = await translationService.extractQuestionsWithLLM(textContent);
-          break;
-        default:
-          return res.status(400).json({
-            success: false,
-            error: "Invalid File Type",
-            message: "Supported file types are: PDF, DOC, DOCX, EPUB, TXT"
-          });
-      }
-    } finally {
-      // Clean up uploaded file
-      try {
-        await fs.unlink(file.path);
-      } catch (unlinkError) {
-        console.error('Error deleting uploaded file:', unlinkError);
-      }
-    }
-
-    if (!fileContent) {
-      return res.status(400).json({
-        success: false,
-        error: "Extraction Error",
-        message: "No content could be extracted from the document"
-      });
-    }
-
-    // Use the translation service to extract questions using LLM
-    const extractedQuestions = await translationService.extractAndAddQuestions(fileContent, quizUuid);
-
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Questions extracted successfully",
-      data: extractedQuestions
+      message: "File received. Processing questions extraction in the background.",
+      data: {
+        quizUuid,
+        sourceLanguage,
+        status: "processing"
+      }
     });
+
+    // Process in background
+    (async () => {
+      try {
+        // Get file extension
+        const fileExt = path.extname(file.originalname).toLowerCase();
+
+        // Process file based on type
+        let fileContent;
+        try {
+          switch (fileExt) {
+            case '.pdf':
+              fileContent = await documentProcessor.processPDF(file.path);
+              break;
+            case '.docx':
+            case '.doc':
+              fileContent = await documentProcessor.processDOC(file.path);
+              break;
+            case '.epub':
+              fileContent = await documentProcessor.processEPUB(file.path);
+              break;
+            case '.txt':
+              // For text files, read content and use LLM extraction
+              const textContent = await fs.readFile(file.path, 'utf8');
+              fileContent = await translationService.extractQuestionsWithLLM(textContent);
+              break;
+            default:
+              console.error("Invalid file type received:", fileExt);
+              return;
+          }
+        } finally {
+          // Clean up uploaded file
+          try {
+            await fs.unlink(file.path);
+          } catch (unlinkError) {
+            console.error('Error deleting uploaded file:', unlinkError);
+          }
+        }
+
+        if (!fileContent) {
+          console.error("No content could be extracted from the document");
+          return;
+        }
+
+        // Use the translation service to extract questions using LLM
+        const extractedQuestions = await translationService.extractAndAddQuestions(fileContent, quizUuid);
+        
+        console.log("Questions extracted successfully:", {
+          quizUuid,
+          questionCount: extractedQuestions.length
+        });
+
+      } catch (error) {
+        console.error("Background processing error:", error);
+      }
+    })();
 
   } catch (error) {
     console.error("Error in extractQuestions:", error);

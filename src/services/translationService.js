@@ -827,6 +827,8 @@ Text to translate: "${text}"`;
     try {
       console.log("Extracting questions using LLM");
       console.log("Text length:", text.length);
+
+    
       
       // Split text into smaller chunks (4000 characters per chunk)
       const chunks = this.splitIntoChunks(text, 4000);
