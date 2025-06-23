@@ -86,20 +86,20 @@ export const uploadDocument = async (req, res) => {
       console.log(`✅ Successfully extracted ${questions.length} questions`);
 
       // Save questions to database
-      console.log('💾 Saving questions to database...');
-      const savedQuestions = await Promise.all(
-        questions.map(async (question) => {
-          const newQuestion = new Question({
-            ...question,
-            sourceDocument: {
-              name: req.file.originalname,
-              type: fileType.substring(1),
-              path: req.file.path
-            }
-          });
-          return await newQuestion.save();
-        })
-      );
+      //console.log('💾 Saving questions to database...');
+      // const savedQuestions = await Promise.all(
+      //   questions.map(async (question) => {
+      //     const newQuestion = new Question({
+      //       ...question,
+      //       sourceDocument: {
+      //         name: req.file.originalname,
+      //         type: fileType.substring(1),
+      //         path: req.file.path
+      //       }
+      //     });
+      //     return await newQuestion.save();
+      //   })
+      // );
       console.log('✅ Questions saved successfully');
 
       // Create course and quiz with extracted questions in QuizFactor
@@ -131,7 +131,7 @@ export const uploadDocument = async (req, res) => {
 
         console.log('🔄 Creating quiz in QuizFactor...');
         const quizFactorResponse = await quizFactorApiService.createQuizWithQuestions(
-          savedQuestions,
+          questions,
           metadata
         );
 
@@ -141,31 +141,31 @@ export const uploadDocument = async (req, res) => {
 
         // Update questions with all UUIDs
         console.log('📝 Updating questions with QuizFactor UUIDs...');
-        await Question.updateMany(
-          { _id: { $in: savedQuestions.map(q => q._id) } },
-          { 
-            $set: { 
-              categoryUuid: quizFactorResponse.category.uuid,
-              courseUuid: quizFactorResponse.course.uuid,
-              quizUuid: quizFactorResponse.quiz.uuid,
-              topicUuid: quizFactorResponse.course.topicUuid || null
-            } 
-          }
-        );
+        // await Question.updateMany(
+        //   { _id: { $in: questions.map(q => q._id) } },
+        //   { 
+        //     $set: { 
+        //       categoryUuid: quizFactorResponse.category.uuid,
+        //       courseUuid: quizFactorResponse.course.uuid,
+        //       quizUuid: quizFactorResponse.quiz.uuid,
+        //       topicUuid: quizFactorResponse.course.topicUuid || null
+        //     } 
+        //   }
+        // );
 
         console.log('✅ Process completed successfully');
-        res.status(200).json({
-          success: true,
-          message: 'Document processed and quiz created successfully',
-          timestamp: new Date().toISOString(),
-          data: {
-            questionsExtracted: savedQuestions.length,
-            questions: savedQuestions,
-            category: quizFactorResponse.category,
-            course: quizFactorResponse.course,
-            quiz: quizFactorResponse.quiz
-          }
-        });
+        // res.status(200).json({
+        //   success: true,
+        //   message: 'Document processed and quiz created successfully',
+        //   timestamp: new Date().toISOString(),
+        //   data: {
+        //     questionsExtracted: questions.length,
+        //     questions: questions,
+        //     category: quizFactorResponse.category,
+        //     course: quizFactorResponse.course,
+        //     quiz: quizFactorResponse.quiz
+        //   }
+        // });
 
       } catch (apiError) {
         const formattedError = formatControllerError(apiError, 'QuizFactor Integration');
@@ -190,8 +190,8 @@ export const uploadDocument = async (req, res) => {
             details: formattedError.details
           },
           data: {
-            questionsExtracted: savedQuestions.length,
-            questions: savedQuestions
+            questionsExtracted: questions.length,
+            questions: questions
           }
         });
       }
@@ -229,157 +229,157 @@ export const uploadDocument = async (req, res) => {
   }
 };
 
-export const assignQuestionsToQuiz = async (req, res) => {
-  try {
-    const { quizUuid } = req.params;
-    const { questionIds } = req.body;
+// export const assignQuestionsToQuiz = async (req, res) => {
+//   try {
+//     const { quizUuid } = req.params;
+//     const { questionIds } = req.body;
 
-    if (!questionIds || !Array.isArray(questionIds) || questionIds.length === 0) {
-      return res.status(400).json({
-        error: 'Invalid request',
-        message: 'Please provide an array of question IDs to assign to the quiz'
-      });
-    }
+//     if (!questionIds || !Array.isArray(questionIds) || questionIds.length === 0) {
+//       return res.status(400).json({
+//         error: 'Invalid request',
+//         message: 'Please provide an array of question IDs to assign to the quiz'
+//       });
+//     }
 
-    // Fetch questions from database
-    const questions = await Question.find({ _id: { $in: questionIds } });
+//     // Fetch questions from database
+//     const questions = await Question.find({ _id: { $in: questionIds } });
 
-    if (questions.length === 0) {
-      return res.status(404).json({
-        error: 'Questions not found',
-        message: 'None of the provided question IDs were found in the database'
-      });
-    }
+//     if (questions.length === 0) {
+//       return res.status(404).json({
+//         error: 'Questions not found',
+//         message: 'None of the provided question IDs were found in the database'
+//       });
+//     }
 
-    if (questions.length !== questionIds.length) {
-      console.warn(`Only ${questions.length} out of ${questionIds.length} questions were found`);
-    }
+//     if (questions.length !== questionIds.length) {
+//       console.warn(`Only ${questions.length} out of ${questionIds.length} questions were found`);
+//     }
 
-    try {
-      // Verify quiz exists
-      await quizFactorApiService.verifyQuiz(quizUuid);
+//     try {
+//       // Verify quiz exists
+//       await quizFactorApiService.verifyQuiz(quizUuid);
       
-      // Add questions to quiz
-      const quizFactorResponse = await quizFactorApiService.addQuizQuestions(quizUuid, questions);
+//       // Add questions to quiz
+//       const quizFactorResponse = await quizFactorApiService.addQuizQuestions(quizUuid, questions);
       
-      // Update questions with quiz assignment
-      await Question.updateMany(
-        { _id: { $in: questionIds } },
-        { $set: { quizUuid: quizUuid } }
-      );
+//       // Update questions with quiz assignment
+//       await Question.updateMany(
+//         { _id: { $in: questionIds } },
+//         { $set: { quizUuid: quizUuid } }
+//       );
 
-      res.status(200).json({
-        message: 'Questions successfully assigned to quiz',
-        assignedQuestions: questions.length,
-        quizUuid,
-        quizFactorResponse
-      });
-    } catch (apiError) {
-      console.error('Error assigning questions to quiz:', apiError);
+//       res.status(200).json({
+//         message: 'Questions successfully assigned to quiz',
+//         assignedQuestions: questions.length,
+//         quizUuid,
+//         quizFactorResponse
+//       });
+//     } catch (apiError) {
+//       console.error('Error assigning questions to quiz:', apiError);
       
-      const statusCode = 
-        apiError.message.includes('not found') ? 404 :
-        apiError.message.includes('Bad request') ? 400 : 500;
+//       const statusCode = 
+//         apiError.message.includes('not found') ? 404 :
+//         apiError.message.includes('Bad request') ? 400 : 500;
       
-      res.status(statusCode).json({
-        error: 'QuizFactor API Error',
-        message: apiError.message
-      });
-    }
-  } catch (error) {
-    console.error('Assignment error:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
+//       res.status(statusCode).json({
+//         error: 'QuizFactor API Error',
+//         message: apiError.message
+//       });
+//     }
+//   } catch (error) {
+//     console.error('Assignment error:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
-export const getQuestions = async (req, res) => {
-  try {
-    const { page = 1, limit = 10, tags, difficulty } = req.query;
-    const query = {};
+// export const getQuestions = async (req, res) => {
+//   try {
+//     const { page = 1, limit = 10, tags, difficulty } = req.query;
+//     const query = {};
 
-    if (tags) {
-      query.tags = { $in: tags.split(',') };
-    }
+//     if (tags) {
+//       query.tags = { $in: tags.split(',') };
+//     }
 
-    if (difficulty) {
-      query['metadata.difficulty'] = difficulty;
-    }
+//     if (difficulty) {
+//       query['metadata.difficulty'] = difficulty;
+//     }
 
-    const questions = await Question.find(query)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .exec();
+//     const questions = await Question.find(query)
+//       .limit(limit * 1)
+//       .skip((page - 1) * limit)
+//       .exec();
 
-    const count = await Question.countDocuments(query);
+//     const count = await Question.countDocuments(query);
 
-    res.status(200).json({
-      questions,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-      totalQuestions: count
-    });
-  } catch (error) {
-    console.error('Error fetching questions:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
+//     res.status(200).json({
+//       questions,
+//       totalPages: Math.ceil(count / limit),
+//       currentPage: page,
+//       totalQuestions: count
+//     });
+//   } catch (error) {
+//     console.error('Error fetching questions:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
-export const updateQuestion = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updates = req.body;
+// export const updateQuestion = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const updates = req.body;
 
-    const question = await Question.findByIdAndUpdate(
-      id,
-      { ...updates, updatedAt: Date.now() },
-      { new: true }
-    );
+//     const question = await Question.findByIdAndUpdate(
+//       id,
+//       { ...updates, updatedAt: Date.now() },
+//       { new: true }
+//     );
 
-    if (!question) {
-      return res.status(404).json({ error: 'Question not found' });
-    }
+//     if (!question) {
+//       return res.status(404).json({ error: 'Question not found' });
+//     }
 
-    // If quizUuid is provided, update the question in QuizeFactor API
-    if (req.body.quizUuid && req.body.quizQuestionUuid) {
-      try {
-        const quizFactorResponse = await quizFactorApiService.addQuizQuestions(
-          req.body.quizUuid,
-          [question]
-        );
+//     // If quizUuid is provided, update the question in QuizeFactor API
+//     if (req.body.quizUuid && req.body.quizQuestionUuid) {
+//       try {
+//         const quizFactorResponse = await quizFactorApiService.addQuizQuestions(
+//           req.body.quizUuid,
+//           [question]
+//         );
         
-        res.status(200).json({
-          question,
-          quizFactorResponse
-        });
-      } catch (apiError) {
-        console.error('Error updating question in QuizeFactor API:', apiError);
+//         res.status(200).json({
+//           question,
+//           quizFactorResponse
+//         });
+//       } catch (apiError) {
+//         console.error('Error updating question in QuizeFactor API:', apiError);
         
-        res.status(200).json({
-          question,
-          apiError: apiError.message
-        });
-      }
-    } else {
-      res.status(200).json(question);
-    }
-  } catch (error) {
-    console.error('Error updating question:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
+//         res.status(200).json({
+//           question,
+//           apiError: apiError.message
+//         });
+//       }
+//     } else {
+//       res.status(200).json(question);
+//     }
+//   } catch (error) {
+//     console.error('Error updating question:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
-export const deleteQuestion = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const question = await Question.findByIdAndDelete(id);
+// export const deleteQuestion = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const question = await Question.findByIdAndDelete(id);
 
-    if (!question) {
-      return res.status(404).json({ error: 'Question not found' });
-    }
+//     if (!question) {
+//       return res.status(404).json({ error: 'Question not found' });
+//     }
 
-    res.status(200).json({ message: 'Question deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting question:', error);
-    res.status(500).json({ error: error.message });
-  }
-}; 
+//     res.status(200).json({ message: 'Question deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting question:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// }; 

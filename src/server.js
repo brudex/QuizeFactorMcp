@@ -21,8 +21,8 @@ async function initialize() {
 
   // Connect to MongoDB
   try {
-    await mongoose.connect('mongodb://localhost:27017/qiuzellm');
-    console.log('Connected to MongoDB');
+    // await mongoose.connect('mongodb://localhost:27017/qiuzellm');
+    // console.log('Connected to MongoDB');
 
     // Start server
     const PORT = config.server.port;
@@ -31,7 +31,7 @@ async function initialize() {
       console.log(`Environment: ${config.server.environment}`);
     });
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    //console.error('MongoDB connection error:', error);
     process.exit(1);
   }
 }
