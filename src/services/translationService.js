@@ -440,7 +440,7 @@ Text to translate: "${text}"`;
       const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
 
       if (updateResponse.data?.status !== '00') {
-        throw new Error(`Failed to update quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
+        throw new Error(`Failed to update quiz questions: ${updateResponse.data?.message || 'Unknown error'}`); 
       }
 
       return {
@@ -804,7 +804,7 @@ Text to translate: "${text}"`;
           throw new Error("No questions could be extracted using fallback method");
         }
         
-        // Add questions to the quiz
+        // Add questions to the quiz 
         const payload = {
           quizUuid: this.quizUuid,
           questions: questions,
@@ -926,6 +926,8 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
       if (allQuestions.length === 0) {
         throw new Error("No questions could be extracted from any chunks");
       }
+
+      console.log("All questions:", allQuestions);
 
       return allQuestions;
     } catch (error) {
@@ -1050,11 +1052,6 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
 
           console.log(`Using ${questions.length} pre-extracted questions`);
 
-          // Get available languages
-          console.log("Fetching available languages...");
-          const availableLanguages = await this.getLanguages();
-          console.log("Available languages for translation:", availableLanguages);
-
           // If no quiz UUID provided, create a new quiz
           if (!quizUuid) {
             quizUuid = await this.createQuiz(
@@ -1063,14 +1060,14 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
             );
           }
 
-          // Add questions to the quiz
-          const result = await this.translateQuestions(quizUuid, availableLanguages.map(lang => lang.code), questions);
+          // Add questions to the quiz without translation
+          const result = await this.addQuestionsToQuiz(quizUuid, questions);
 
           return {
             quizUuid: result.quizUuid,
             questions: result.questions,
             message: `Successfully added ${questions.length} questions`,
-            languages: availableLanguages
+            status: 'extracted'
           };
         } else {
           throw new Error("Invalid content format");
@@ -1084,18 +1081,28 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
         .trim();
 
       // Extract questions using LLM with chunking
-      const questions = await this.extractQuestions(content);
+      const extractedQuestions = await this.extractQuestions(content);
       
-      if (!questions || questions.length === 0) {
+      if (!extractedQuestions || extractedQuestions.length === 0) {
         throw new Error("No questions could be extracted from the document");
       }
 
-      console.log(`Extracted ${questions.length} questions`);
+      console.log(`Extracted ${extractedQuestions.length} questions`);
 
-      // Get available languages
-      console.log("Fetching available languages...");
-      const availableLanguages = await this.getLanguages();
-      console.log("Available languages for translation:", availableLanguages);
+      // Transform extracted questions to the expected format
+      const questions = extractedQuestions.map(q => ({
+        uuid: uuidv4(),
+        questionType: "single-choice",
+        difficulty: "medium",
+        points: 1,
+        translations: [{
+          languageCode: "en",
+          questionText: q.questionText,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation
+        }]
+      }));
 
       // If no quiz UUID provided, create a new quiz
       if (!quizUuid) {
@@ -1105,18 +1112,100 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
         );
       }
 
-      // Add questions to the quiz with translations
-      const result = await this.translateQuestions(quizUuid, availableLanguages.map(lang => lang.code), questions);
+      // Add questions to the quiz without translation
+      const result = await this.addQuestionsToQuiz(quizUuid, questions);
 
       return {
         quizUuid: result.quizUuid,
         questions: result.questions,
         message: `Successfully extracted and added ${questions.length} questions`,
-        languages: availableLanguages
+        status: 'extracted'
       };
     } catch (error) {
       console.error("Question extraction error:", error);
       throw new Error(`Failed to extract and add questions: ${error.message}`);
+    }
+  }
+
+  async addQuestionsToQuiz(quizUuid, questions) {
+    try {
+      // Prepare API payload
+      const payload = {
+        quizUuid,
+        questions
+      };
+
+      // Log the payload for debugging
+      console.log('\n=== Adding Questions to Quiz ===');
+      console.log('Quiz UUID:', quizUuid);
+      console.log('Number of questions:', questions.length);
+      console.log('First question sample:');
+      if (questions[0]) {
+        console.log('- UUID:', questions[0].uuid);
+        console.log('- Type:', questions[0].questionType);
+        console.log('- Number of translations:', questions[0].translations.length);
+        console.log('- Languages:', questions[0].translations.map(t => t.languageCode).join(', '));
+        console.log('- First translation:');
+        if (questions[0].translations[0]) {
+          const trans = questions[0].translations[0];
+          console.log('  - Language:', trans.languageCode);
+          console.log('  - Question:', trans.questionText);
+          console.log('  - Options:', JSON.stringify(trans.options, null, 2));
+          console.log('  - Correct Answer:', trans.correctAnswer);
+        }
+      }
+      console.log('=== End Adding Questions to Quiz ===\n');
+  
+
+      // Send to API
+      const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
+
+      if (updateResponse.data?.status !== '00') {
+        throw new Error(`Failed to add quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
+      }
+
+      return {
+        quizUuid,
+        questions,
+        timestamp: new Date().toISOString(),
+        response: updateResponse.data
+      };
+    } catch (error) {
+      console.error("Add questions error:", error);
+      throw new Error(`Failed to add questions to quiz: ${error.message}`);
+    }
+  }
+
+  async translateAndAddQuestions(quizUuid, targetLanguages, questions = null) {
+    try {
+      // If questions are not provided, fetch them from the quiz
+      if (!questions) {
+        const quizResponse = await this.client.get(`/api/ai/quiz/${quizUuid}`);
+        
+        if (quizResponse.data?.status !== '00') {
+          throw new Error(`Failed to fetch quiz: ${quizResponse.data?.message || 'Unknown error'}`);
+        }
+
+        // Get questions from quiz (this would need to be implemented in the API)
+        // For now, we'll assume questions are passed in
+        throw new Error("Questions must be provided for translation");
+      }
+
+      console.log(`Starting translation for ${questions.length} questions`);
+
+      // Add questions to the quiz with translations
+      const result = await this.translateQuestions(quizUuid, targetLanguages, questions);
+
+      return {
+        quizUuid: result.quizUuid,
+        questions: result.questions,
+        message: `Successfully translated and added ${questions.length} questions`,
+        updatedLanguages: targetLanguages,
+        status: 'translated'
+      };
+    } catch (error) {
+      console.error("Question translation error:", error);
+      throw new Error(`Failed to translate and add questions: ${error.message}`);
     }
   }
 
@@ -1178,6 +1267,38 @@ Text: "${text}"`;
         error.message
       );
       // Return default supported languages
+    }
+  }
+
+  async getQuizInfo(quizUuid) {
+    try {
+      const response = await this.client.get(`/api/ai/quiz/${quizUuid}`);
+      
+      if (response.data?.status !== '00') {
+        throw new Error(`Failed to fetch quiz: ${response.data?.message || 'Unknown error'}`);
+      }
+
+      const quiz = response.data.data;
+      
+      return {
+        uuid: quiz.uuid,
+        title: quiz.title,
+        description: quiz.description,
+        courseUuid: quiz.courseUuid,
+        difficulty: quiz.difficulty,
+        timeLimit: quiz.timeLimit,
+        passingScore: quiz.passingScore,
+        isActive: quiz.isActive,
+        questions: quiz.questions || [],
+        translations: quiz.translations || [],
+        questionCount: (quiz.questions || []).length,
+        availableLanguages: (quiz.translations || []).map(t => t.languageCode),
+        hasQuestions: (quiz.questions || []).length > 0,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error("Get quiz info error:", error);
+      throw new Error(`Failed to get quiz information: ${error.message}`);
     }
   }
 

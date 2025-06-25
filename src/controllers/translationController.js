@@ -338,9 +338,8 @@ export const extractQuestions = async (req, res) => {
               fileContent = await documentProcessor.processEPUB(file.path);
               break;
             case '.txt':
-              // For text files, read content and use LLM extraction
-              const textContent = await fs.readFile(file.path, 'utf8');
-              fileContent = await translationService.extractQuestionsWithLLM(textContent);
+              // For text files, read content directly
+              fileContent = await fs.readFile(file.path, 'utf8');
               break;
             default:
               console.error("Invalid file type received:", fileExt);
@@ -360,12 +359,13 @@ export const extractQuestions = async (req, res) => {
           return;
         }
 
-        // Use the translation service to extract questions using LLM
+        // Use the translation service to extract questions only (no translation)
         const extractedQuestions = await translationService.extractAndAddQuestions(fileContent, quizUuid);
         
         console.log("Questions extracted successfully:", {
           quizUuid,
-          questionCount: extractedQuestions.length
+          questionCount: extractedQuestions.questions.length,
+          status: extractedQuestions.status
         });
 
       } catch (error) {
@@ -387,56 +387,133 @@ export const extractQuestions = async (req, res) => {
 export const translateExtractedQuestions = async (req, res) => {
   try {
     const { quizUuid } = req.params;
-    const { questionUuids } = req.body; // Optional: specific questions to translate
+    const { questionUuids, targetLanguages } = req.body; // Allow custom target languages
 
-    // Fetch available languages
-    const languages = await translationService.getLanguages();
-    if (!languages || languages.length === 0) {
+    // Validate quiz UUID
+    if (!quizUuid) {
       return res.status(400).json({
         success: false,
-        error: "Configuration Error",
-        message: "No target languages available for translation"
+        error: "Validation Error",
+        message: "Quiz UUID is required"
       });
     }
 
-    // Extract language codes
-    const targetLanguages = languages.map(lang => lang.code);
-
-    // Fetch questions from the quiz
-    const quizResponse = await quizFactorApiService.verifyQuiz(quizUuid);
-    if (!quizResponse.data?.questions) {
-      return res.status(404).json({
-        success: false,
-        error: "Not Found",
-        message: "No questions found in the quiz"
-      });
+    // Get target languages from request or fetch available languages
+    let languagesToTranslate = targetLanguages;
+    if (!languagesToTranslate || !Array.isArray(languagesToTranslate) || languagesToTranslate.length === 0) {
+      // Fetch available languages
+      const languages = await translationService.getLanguages();
+      if (!languages || languages.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: "Configuration Error",
+          message: "No target languages available for translation"
+        });
+      }
+      languagesToTranslate = languages.map(lang => lang.code);
     }
 
-    let questionsToTranslate = quizResponse.data.questions;
-    if (questionUuids && questionUuids.length > 0) {
-      questionsToTranslate = questionsToTranslate.filter(q => questionUuids.includes(q.uuid));
+    // Validate target languages if provided
+    if (targetLanguages && Array.isArray(targetLanguages)) {
+      const validation = validateLanguages(targetLanguages);
+      if (!validation.isValid) {
+        return res.status(400).json({
+          success: false,
+          error: validation.error,
+          message: validation.message,
+          validCodes: validation.validCodes
+        });
+      }
     }
 
-    // Translate questions
-    const translatedQuestions = await translationService.translateQuizQuestions(
-      quizUuid,
-      targetLanguages,
-      questionsToTranslate
-    );
-
-    res.status(200).json({
+    // Send immediate response
+    res.status(202).json({
       success: true,
-      message: "Questions translated successfully",
+      message: "Translation processing started in the background",
       data: {
         quizUuid,
-        questionsCount: questionsToTranslate.length,
-        targetLanguages,
-        result: translatedQuestions
+        targetLanguages: languagesToTranslate,
+        questionUuids: questionUuids || "all",
+        status: "processing"
       }
     });
+
+    // Process translation in background
+    (async () => {
+      try {
+        // Fetch questions from the quiz
+        const quizResponse = await quizFactorApiService.verifyQuiz(quizUuid);
+        if (!quizResponse.data?.questions) {
+          console.error("No questions found in the quiz");
+          return;
+        }
+
+        let questionsToTranslate = quizResponse.data.questions;
+        
+        // Filter specific questions if questionUuids provided
+        if (questionUuids && Array.isArray(questionUuids) && questionUuids.length > 0) {
+          questionsToTranslate = questionsToTranslate.filter(q => questionUuids.includes(q.uuid));
+        }
+
+        if (questionsToTranslate.length === 0) {
+          console.error("No questions found to translate");
+          return;
+        }
+
+        // Translate questions
+        const translatedQuestions = await translationService.translateAndAddQuestions(
+          quizUuid,
+          languagesToTranslate,
+          questionsToTranslate
+        );
+
+        console.log("Questions translated successfully:", {
+          quizUuid,
+          questionsCount: questionsToTranslate.length,
+          targetLanguages: languagesToTranslate,
+          status: translatedQuestions.status
+        });
+
+      } catch (error) {
+        console.error("Background translation processing error:", error);
+      }
+    })();
+
   } catch (error) {
     console.error("Error in translateExtractedQuestions:", error);
     const formattedError = formatControllerError(error, "Question Translation");
+    res.status(formattedError.status || 500).json({
+      success: false,
+      error: formattedError.error,
+      message: formattedError.message
+    });
+  }
+};
+
+export const getQuizInfo = async (req, res) => {
+  try {
+    const { quizUuid } = req.params;
+
+    // Validate quiz UUID
+    if (!quizUuid) {
+      return res.status(400).json({
+        success: false,
+        error: "Validation Error",
+        message: "Quiz UUID is required"
+      });
+    }
+
+    const quizInfo = await translationService.getQuizInfo(quizUuid);
+
+    res.status(200).json({
+      success: true,
+      message: "Quiz information retrieved successfully",
+      data: quizInfo
+    });
+
+  } catch (error) {
+    console.error("Error in getQuizInfo:", error);
+    const formattedError = formatControllerError(error, "Get Quiz Info");
     res.status(formattedError.status || 500).json({
       success: false,
       error: formattedError.error,
