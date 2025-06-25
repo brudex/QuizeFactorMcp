@@ -194,7 +194,9 @@ export class QuizFactorApiService {
 
   async verifyQuiz(quizUuid) {
     try {
+    
       const response = await this.client.get(`/api/ai/quiz/${quizUuid}`);
+  
       if (response.data?.status !== '00') {
         throw new Error(`Failed to verify quiz: ${response.data?.message || 'Unknown error'}`);
       }
