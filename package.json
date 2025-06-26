@@ -2,6 +2,7 @@
   "name": "qiuzellm",
   "version": "1.0.0",
   "description": "Quiz and Course Management System with LLM Integration",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
