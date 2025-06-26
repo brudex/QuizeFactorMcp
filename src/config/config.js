@@ -45,7 +45,7 @@ export const config = {
   // File Configuration
   files: {
     upload: {
-      maxSize: parseInt(process.env.MAX_FILE_SIZE || "10485760", 10), // 10MB
+      maxSize: parseInt(process.env.MAX_FILE_SIZE || "10000000", 10), // 10MB
       uploadDir: resolveProjectPath("./uploads"),
       allowedTypes: [
         "application/pdf",
@@ -61,7 +61,7 @@ export const config = {
 
   // Document Processing Configuration
   processing: {
-    maxFileSize: parseInt(process.env.MAX_FILE_SIZE || "10485760", 10), // 10MB
+    maxFileSize: parseInt(process.env.MAX_FILE_SIZE || "10000000", 10), // 10MB
     allowedFileTypes: [
       "application/pdf",
       "application/msword",
