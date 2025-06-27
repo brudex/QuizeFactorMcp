@@ -521,9 +521,20 @@ Text to translate: "${text}"`;
   }
 
   standardizeQuestionOptions(question) {
-    // Ensure question has required fields
+    // Create default translation if translations array is missing
     if (!question.translations || !Array.isArray(question.translations)) {
-      throw new Error("Question must have translations array");
+      console.log("Creating default translation for question without translations");
+      
+      // Create a default English translation from the question's direct properties
+      const defaultTranslation = {
+        languageCode: "en",
+        questionText: question.questionText || question.text || "Question text not available",
+        options: question.options || {},
+        correctAnswer: question.correctAnswer || "option_1",
+        explanation: question.explanation || "No explanation provided"
+      };
+      
+      question.translations = [defaultTranslation];
     }
 
     // Normalize each translation's options
@@ -710,11 +721,13 @@ Text to translate: "${text}"`;
       console.log('=== End API Request Payload ===\n');
 
       // Send to API
-      const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
+      const updateResponse = await this.client.post("/api/ai/update-quiz-questions", payload); 
 
       if (updateResponse.data?.status !== '00') {
         throw new Error(`Failed to update quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
       }
+
+      console.log("Update quiz questions response:", updateResponse.data);
 
       return {
         quizUuid,
@@ -1160,6 +1173,7 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
       // Send to API
       const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
 
+
       if (updateResponse.data?.status !== '00') {
         throw new Error(`Failed to add quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
       }
@@ -1168,19 +1182,21 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
         quizUuid,
         questions,
         timestamp: new Date().toISOString(),
-        response: updateResponse.data
+        response: updateResponse.data,
+        status: updateResponse.data?.status,
+        message: updateResponse.data?.message
       };
     } catch (error) {
       console.error("Add questions error:", error);
       throw new Error(`Failed to add questions to quiz: ${error.message}`);
     }
-  }
+  } 
 
   async translateAndAddQuestions(quizUuid, targetLanguages, questions = null) {
     try {
       // If questions are not provided, fetch them from the quiz
       if (!questions) {
-        const quizResponse = await this.client.get(`/api/ai/quiz/${quizUuid}`);
+        const quizResponse = await this.client.get(`/api/ai/quiz/details/${quizUuid}`);
         
         if (quizResponse.data?.status !== '00') {
           throw new Error(`Failed to fetch quiz: ${quizResponse.data?.message || 'Unknown error'}`);

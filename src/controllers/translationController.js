@@ -449,6 +449,8 @@ export const translateExtractedQuestions = async (req, res) => {
         }
 
         let questionsToTranslate = quizResponse.data.questions;
+
+        console.log("Questions to translate:", questionsToTranslate);
         
         // Filter specific questions if questionUuids provided
         if (questionUuids && Array.isArray(questionUuids) && questionUuids.length > 0) {
