@@ -19,14 +19,25 @@ export class TranslationService {
       },
       timeout: 30000,
     });
+
+    // Rate limiting state
+    this.rateLimitState = {
+      isRateLimited: false,
+      rateLimitCount: 0,
+      lastRateLimitTime: null,
+      backoffMultiplier: 1,
+      maxBackoffMultiplier: 8
+    };
   }
 
   async translateWithLLM(text, targetLanguage, context = "", maxRetries = 3) {
     let retries = 0;
-    const baseDelay = 2000; // Start with 2 second delay
     
     while (retries < maxRetries) {
       try {
+        // Check if we're in a rate limited state and wait if needed
+        await this.handleRateLimitBackoff();
+
         const prompt = `Translate the following text to ${targetLanguage}. Return ONLY the translation, without any prefixes or explanations:
 
 Context: ${context}
@@ -36,6 +47,9 @@ Text to translate: "${text}"`;
           maxTokens: 1024,
           temperature: 0
         });
+
+        // Reset rate limit state on successful call
+        this.resetRateLimitState();
 
         // Clean up the response by removing common prefixes and trimming
         let cleanedText = translatedText.trim();
@@ -63,19 +77,78 @@ Text to translate: "${text}"`;
       } catch (error) {
         console.error("Translation error:", error);
 
-        if (error.message.includes('Rate limit') || error.message.includes('429')) {
+        if (this.isRateLimitError(error)) {
           retries++;
-          // Exponential backoff with jitter
-          const jitter = Math.random() * 1000;
-          const delay = (baseDelay * Math.pow(2, retries)) + jitter;
-          console.log(`Rate limited, waiting ${delay/1000} seconds before retry ${retries}/${maxRetries}`);
-          await sleep(delay);
+          await this.handleRateLimitError(retries, maxRetries);
           continue;
         }
         throw new Error(`Failed to translate with LLM: ${error.message}`);
       }
     }
     throw new Error(`Failed to translate after ${maxRetries} retries due to rate limiting`);
+  }
+
+  isRateLimitError(error) {
+    return error.message.includes('Rate limit') || 
+           error.message.includes('429') ||
+           error.message.includes('rate limit') ||
+           error.status === 429;
+  }
+
+  async handleRateLimitError(retries, maxRetries) {
+    this.rateLimitState.isRateLimited = true;
+    this.rateLimitState.rateLimitCount++;
+    this.rateLimitState.lastRateLimitTime = Date.now();
+    
+    // Increase backoff multiplier for subsequent calls
+    this.rateLimitState.backoffMultiplier = Math.min(
+      this.rateLimitState.backoffMultiplier * 1.5, 
+      this.rateLimitState.maxBackoffMultiplier
+    );
+
+    // Exponential backoff with jitter
+    const baseDelay = 5000; // Start with 5 seconds
+    const jitter = Math.random() * 2000;
+    const delay = (baseDelay * Math.pow(2, retries) * this.rateLimitState.backoffMultiplier) + jitter;
+    
+    console.log(`         ⚠️  API busy (${this.rateLimitState.rateLimitCount} rate limits so far), taking a ${(delay/1000).toFixed(1)}s break before try ${retries} of ${maxRetries}...`);
+    await sleep(delay);
+  }
+
+  async handleRateLimitBackoff() {
+    if (this.rateLimitState.isRateLimited) {
+      const timeSinceLastRateLimit = Date.now() - this.rateLimitState.lastRateLimitTime;
+      const backoffTime = 10000 * this.rateLimitState.backoffMultiplier; // 10s base backoff
+      
+      if (timeSinceLastRateLimit < backoffTime) {
+        const remainingWait = backoffTime - timeSinceLastRateLimit;
+        const remainingMinutes = Math.floor(remainingWait / 60000);
+        const remainingSeconds = Math.floor((remainingWait % 60000) / 1000);
+        
+        if (remainingMinutes > 0) {
+          console.log(`         ⏳ Still cooling down from rate limits, ${remainingMinutes}m ${remainingSeconds}s more to wait...`);
+        } else {
+          console.log(`         ⏳ Still cooling down from rate limits, ${remainingSeconds}s more to wait...`);
+        }
+        await sleep(remainingWait);
+      }
+    }
+  }
+
+  resetRateLimitState() {
+    // Gradually reduce backoff multiplier on successful calls
+    if (this.rateLimitState.backoffMultiplier > 1) {
+      this.rateLimitState.backoffMultiplier = Math.max(1, this.rateLimitState.backoffMultiplier * 0.8);
+    }
+    
+    // Reset rate limited state after successful calls
+    if (this.rateLimitState.isRateLimited) {
+      const timeSinceLastRateLimit = Date.now() - this.rateLimitState.lastRateLimitTime;
+      if (timeSinceLastRateLimit > 30000) { // 30 seconds
+        this.rateLimitState.isRateLimited = false;
+        console.log("         ✅ Back to normal speed - rate limits cleared!");
+      }
+    }
   }
 
   async translateCategory(categoryUuid, targetLanguages) {
@@ -314,6 +387,8 @@ Text to translate: "${text}"`;
       if (updateResponse.data?.status !== '00') {
         throw new Error(`Failed to update quiz: ${updateResponse.data?.message || 'Unknown error'}`);
       }
+
+      console.log("Update quiz response:", JSON.stringify(updateResponse.data, null, 2));
 
 
       return {
@@ -576,121 +651,24 @@ Text to translate: "${text}"`;
   }
 
   async translateQuestions(quizUuid, targetLanguages, questionsData = []) {
+    const startTime = Date.now();
+    const totalOperations = questionsData.length * targetLanguages.length;
+    
     try {
       // Validate input data
       if (!quizUuid || !Array.isArray(questionsData) || questionsData.length === 0) {
         throw new Error("Invalid input: quizUuid and questions array are required");
       }
 
-      // Process questions one at a time to avoid rate limits
-      const translatedQuestions = [];
+      console.log('\n🚀 ===== STARTING TRANSLATION =====');
+      console.log(`📚 We need to translate ${questionsData.length} questions`);
+      console.log(`🌍 Into ${targetLanguages.length} languages: ${targetLanguages.join(', ')}`);
+      console.log(`⚡ That's ${totalOperations} translation tasks in total`);
+      console.log(`🕒 Starting now at ${new Date().toLocaleTimeString()}`);
+      console.log('🎯 Let\'s get started!\n');
       
-      for (let i = 0; i < questionsData.length; i++) {
-        console.log(`Processing question ${i + 1}/${questionsData.length}`);
-        const questionData = questionsData[i];
-
-        // Standardize and validate the question
-        const standardizedQuestion = this.standardizeQuestionOptions(questionData);
-
-        // Validate required fields
-        if (!standardizedQuestion.uuid) {
-          standardizedQuestion.uuid = uuidv4();
-        }
-        if (!standardizedQuestion.questionType) {
-          standardizedQuestion.questionType = 'single-choice';
-        }
-        if (!standardizedQuestion.difficulty) {
-          standardizedQuestion.difficulty = 'medium';
-        }
-        if (!standardizedQuestion.points) {
-          standardizedQuestion.points = 1;
-        }
-
-        // Find source translation (prefer English)
-        const sourceTranslation = standardizedQuestion.translations.find(t => t.languageCode === 'en') 
-          || standardizedQuestion.translations[0];
-        
-        if (!sourceTranslation) {
-          throw new Error(`No source translation found for question ${standardizedQuestion.uuid}`);
-        }
-
-        // Keep existing translations
-        const existingTranslations = standardizedQuestion.translations;
-
-        // Translate to each target language sequentially
-        const newTranslations = [];
-        for (const lang of targetLanguages) {
-          // Skip if translation already exists
-          const existingTrans = existingTranslations.find(t => t.languageCode === lang);
-          if (existingTrans) {
-            newTranslations.push(existingTrans);
-            continue;
-          }
-
-          try {
-            // Translate question text
-            const questionText = await this.translateWithLLM(
-              sourceTranslation.questionText,
-              lang,
-              "This is a quiz question"
-            );
-
-            // Wait between translations to respect rate limits
-            await this.sleep(2000);
-
-            // Translate options sequentially
-            const options = {};
-            for (const [key, value] of Object.entries(sourceTranslation.options)) {
-              // If the value is numeric or has units, keep it as is
-              if (/^-?\d+(\.\d+)?(%|cm|m)?$/.test(value) || /^[A-Za-z0-9]+$/.test(value)) {
-                options[key] = value;
-              } else {
-                options[key] = await this.translateWithLLM(
-                  value,
-                  lang,
-                  "This is a quiz answer option"
-                );
-              }
-              await this.sleep(2000);
-            }
-
-            // Translate explanation
-            const explanation = await this.translateWithLLM(
-              sourceTranslation.explanation,
-              lang,
-              "This is an explanation for the correct answer"
-            );
-
-            newTranslations.push({
-              languageCode: lang,
-              questionText,
-              options,
-              correctAnswer: sourceTranslation.correctAnswer,
-              explanation
-            });
-
-            // Wait between languages to respect rate limits
-            await this.sleep(5000);
-          } catch (error) {
-            if (error.status === 429) {
-              console.log(`Rate limited, waiting 60 seconds before continuing...`);
-              await this.sleep(60000);
-              i--; // Retry this question
-              continue;
-            }
-            throw error;
-          }
-        }
-
-        // Update question with all translations
-        standardizedQuestion.translations = newTranslations;
-        translatedQuestions.push(standardizedQuestion);
-
-        // Wait between questions to respect rate limits
-        if (i < questionsData.length - 1) {
-          await this.sleep(5000);
-        }
-      }
+      // Process questions in parallel with controlled concurrency
+      const translatedQuestions = await this.processQuestionsInBatches(questionsData, targetLanguages, startTime, totalOperations);
 
       // Prepare API payload
       const payload = {
@@ -698,27 +676,11 @@ Text to translate: "${text}"`;
         questions: translatedQuestions
       };
 
-      // Log the payload for debugging
-      console.log('\n=== API Request Payload ===');
+      console.log('\n=== API Request Summary ===');
       console.log('Quiz UUID:', quizUuid);
       console.log('Number of questions:', translatedQuestions.length);
-      console.log('First question sample:');
-      if (translatedQuestions[0]) {
-        console.log('- UUID:', translatedQuestions[0].uuid);
-        console.log('- Type:', translatedQuestions[0].questionType);
-        console.log('- Number of translations:', translatedQuestions[0].translations.length);
-        console.log('- Languages:', translatedQuestions[0].translations.map(t => t.languageCode).join(', '));
-        console.log('- First translation:');
-        if (translatedQuestions[0].translations[0]) {
-          const trans = translatedQuestions[0].translations[0];
-          console.log('  - Language:', trans.languageCode);
-          console.log('  - Question:', trans.questionText);
-          console.log('  - Options:', JSON.stringify(trans.options, null, 2));
-          console.log('  - Correct Answer:', trans.correctAnswer);
-        }
-      }
-      console.log('\nFull payload:', JSON.stringify(payload, null, 2));
-      console.log('=== End API Request Payload ===\n');
+      console.log('Target languages:', targetLanguages.join(', '));
+      console.log('=== End API Request Summary ===\n');
 
       // Send to API
       const updateResponse = await this.client.post("/api/ai/update-quiz-questions", payload); 
@@ -729,17 +691,494 @@ Text to translate: "${text}"`;
 
       console.log("Update quiz questions response:", updateResponse.data);
 
+      // Final summary
+      const endTime = Date.now();
+      const totalTime = (endTime - startTime) / 1000;
+      const averageTimePerOperation = totalTime / totalOperations;
+      
+      console.log('\n🎉 ===== TRANSLATION COMPLETED! =====');
+      console.log(`✅ Successfully translated all ${questionsData.length} questions!`);
+      console.log(`🌍 Now available in: ${targetLanguages.join(', ')}`);
+      console.log(`⏱️  Total time taken: ${Math.floor(totalTime / 60)}m ${Math.floor(totalTime % 60)}s`);
+      console.log(`📊 Average time per task: ${averageTimePerOperation.toFixed(1)} seconds`);
+      if (this.rateLimitState.rateLimitCount > 0) {
+        console.log(`⚠️  Had to wait for rate limits ${this.rateLimitState.rateLimitCount} times`);
+      } else {
+        console.log(`🚀 No rate limit issues - smooth sailing!`);
+      }
+      console.log(`🕒 Finished at ${new Date().toLocaleTimeString()}`);
+      console.log('🎊 All done! Your quiz is ready to go!\n');
+
       return {
         quizUuid,
         questions: translatedQuestions,
         updatedLanguages: targetLanguages,
         timestamp: new Date().toISOString(),
-        response: updateResponse.data
+        response: updateResponse.data,
+        status: updateResponse.data?.status,
+        message: updateResponse.data?.message,
+        statistics: {
+          totalQuestions: questionsData.length,
+          totalLanguages: targetLanguages.length,
+          totalOperations: totalOperations,
+          totalTimeSeconds: totalTime,
+          averageTimePerOperation: averageTimePerOperation,
+          rateLimitEncounters: this.rateLimitState.rateLimitCount
+        }
       };
     } catch (error) {
       console.error("Quiz questions translation error:", error);
       throw new Error(`Failed to translate quiz questions: ${error.message}`);
     }
+  }
+
+  async processQuestionsInBatches(questionsData, targetLanguages, startTime, totalOperations, initialBatchSize = 3) {
+    const translatedQuestions = [];
+    let currentBatchSize = initialBatchSize;
+    let completedOperations = 0;
+    
+    // Adjust batch size based on rate limiting state
+    if (this.rateLimitState.isRateLimited || this.rateLimitState.rateLimitCount > 0) {
+      currentBatchSize = 1; // Process one at a time when rate limited
+      console.log("⚠️  Going slower due to rate limits - processing one question at a time");
+    }
+    
+    // Process questions in batches to control load
+    for (let i = 0; i < questionsData.length; i += currentBatchSize) {
+      const batch = questionsData.slice(i, i + currentBatchSize);
+      const batchNumber = Math.floor(i/currentBatchSize) + 1;
+      const totalBatches = Math.ceil(questionsData.length/currentBatchSize);
+      const completedQuestions = i;
+      const progressPercentage = Math.round((completedQuestions / questionsData.length) * 100);
+      
+      console.log(`\n📦 Working on batch ${batchNumber} of ${totalBatches}`);
+      if (batch.length === 1) {
+        console.log(`📝 Processing question ${completedQuestions + 1} of ${questionsData.length}`);
+      } else {
+        console.log(`📝 Processing ${batch.length} questions (${completedQuestions + 1}-${completedQuestions + batch.length} of ${questionsData.length})`);
+      }
+      // Create a simple progress bar
+      const progressBarLength = 20;
+      const filledLength = Math.round((completedQuestions / questionsData.length) * progressBarLength);
+      const progressBar = '█'.repeat(filledLength) + '░'.repeat(progressBarLength - filledLength);
+      
+      console.log(`📊 Progress: ${completedQuestions}/${questionsData.length} questions done (${progressPercentage}%)`);
+      console.log(`📈 [${progressBar}] ${progressPercentage}%`);
+      
+      // Calculate and display time estimates
+      if (completedOperations > 0) {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const avgTimePerOperation = elapsedTime / completedOperations;
+        const remainingOperations = totalOperations - completedOperations;
+        const estimatedRemainingTime = (remainingOperations * avgTimePerOperation) / 60; // in minutes
+        
+        const elapsedMinutes = Math.floor(elapsedTime / 60);
+        const elapsedSeconds = Math.floor(elapsedTime % 60);
+        
+        if (elapsedMinutes > 0) {
+          console.log(`⏱️  Time so far: ${elapsedMinutes}m ${elapsedSeconds}s | About ${estimatedRemainingTime.toFixed(1)} minutes left`);
+        } else {
+          console.log(`⏱️  Time so far: ${elapsedSeconds}s | About ${estimatedRemainingTime.toFixed(1)} minutes left`);
+        }
+        
+        if (this.rateLimitState.rateLimitCount > 0) {
+          console.log(`⚠️  Rate limits encountered: ${this.rateLimitState.rateLimitCount} times (going ${this.rateLimitState.backoffMultiplier.toFixed(1)}x slower)`);
+        }
+      }
+      
+             // Check rate limit state before processing batch
+       if (this.rateLimitState.isRateLimited) {
+         console.log("⚠️  Taking it slow due to rate limits - processing one at a time");
+         // Process questions one by one when rate limited
+         for (const questionData of batch) {
+           const questionIndex = questionsData.indexOf(questionData) + 1;
+           console.log(`\n🔄 Working on question ${questionIndex} of ${questionsData.length}`);
+           
+           const result = await this.translateSingleQuestion(questionData, targetLanguages, questionIndex, questionsData.length);
+           translatedQuestions.push(result);
+           completedOperations += targetLanguages.length;
+           
+           console.log(`✅ Question ${questionIndex} is done! (translated into ${targetLanguages.length} languages)`);
+           
+           // Longer delay between questions when rate limited
+           if (questionsData.indexOf(questionData) < questionsData.length - 1) {
+             console.log("⏳ Taking a 5-second break before the next question...");
+             await this.sleep(5000);
+           }
+         }
+       } else {
+         // Process questions in current batch in parallel
+         try {
+           console.log(`🚀 Processing ${batch.length} questions at the same time (fast mode)`);
+           const batchPromises = batch.map(async (questionData, index) => {
+             const actualIndex = i + index;
+             return await this.translateSingleQuestion(questionData, targetLanguages, actualIndex + 1, questionsData.length);
+           });
+           
+           const batchResults = await Promise.all(batchPromises);
+           translatedQuestions.push(...batchResults);
+           completedOperations += batch.length * targetLanguages.length;
+           
+           const totalTranslations = batch.length * targetLanguages.length;
+           console.log(`✅ Batch complete! Just finished ${totalTranslations} translations (${batch.length} questions × ${targetLanguages.length} languages)`);
+         } catch (error) {
+           if (this.isRateLimitError(error)) {
+             console.log("⚠️  Hit a rate limit! Let's try again more slowly...");
+             // If batch fails due to rate limiting, retry sequentially
+             for (const questionData of batch) {
+               const questionIndex = questionsData.indexOf(questionData) + 1;
+               console.log(`\n🔄 Retrying question ${questionIndex} of ${questionsData.length} (going slower now)`);
+               
+               const result = await this.translateSingleQuestion(questionData, targetLanguages, questionIndex, questionsData.length);
+               translatedQuestions.push(result);
+               completedOperations += targetLanguages.length;
+               
+               console.log(`✅ Question ${questionIndex} completed (retry successful!)`);
+               await this.sleep(5000);
+             }
+           } else {
+             throw error;
+           }
+         }
+       }
+      
+             // Adaptive delay between batches based on rate limiting state
+       if (i + currentBatchSize < questionsData.length) {
+         const delayTime = this.rateLimitState.isRateLimited ? 10000 : 3000;
+         const nextBatchNumber = batchNumber + 1;
+         const remainingBatches = totalBatches - batchNumber;
+         
+         if (this.rateLimitState.isRateLimited) {
+           console.log(`\n⏳ Taking a 10-second break before batch ${nextBatchNumber} (${remainingBatches} batches left)...`);
+         } else {
+           console.log(`\n⏳ Quick 3-second pause before batch ${nextBatchNumber} (${remainingBatches} more to go)...`);
+         }
+         await this.sleep(delayTime);
+       }
+       
+       // Adjust batch size dynamically
+       if (!this.rateLimitState.isRateLimited && this.rateLimitState.rateLimitCount === 0 && currentBatchSize < initialBatchSize) {
+         currentBatchSize = Math.min(currentBatchSize + 1, initialBatchSize);
+         console.log(`🚀 Speeding up! Now processing ${currentBatchSize} questions at once (no rate limits)`);
+       }
+    }
+    
+    return translatedQuestions;
+  }
+
+  async translateSingleQuestion(questionData, targetLanguages, questionIndex = 0, totalQuestions = 0) {
+    console.log(`   🔍 Getting question ${questionIndex} of ${totalQuestions} ready...`);
+    
+    // Standardize and validate the question
+    const standardizedQuestion = this.standardizeQuestionOptions(questionData);
+
+    // Validate required fields
+    if (!standardizedQuestion.uuid) {
+      standardizedQuestion.uuid = uuidv4();
+    }
+    if (!standardizedQuestion.questionType) {
+      standardizedQuestion.questionType = 'single-choice';
+    }
+    if (!standardizedQuestion.difficulty) {
+      standardizedQuestion.difficulty = 'medium';
+    }
+    if (!standardizedQuestion.points) {
+      standardizedQuestion.points = 1;
+    }
+
+    const questionPreview = standardizedQuestion.translations[0]?.questionText?.substring(0, 60) || 'N/A';
+    console.log(`   📝 Question preview: "${questionPreview}..."`);
+
+    // Find source translation (prefer English)
+    const sourceTranslation = standardizedQuestion.translations.find(t => t.languageCode === 'en') 
+      || standardizedQuestion.translations[0];
+    
+    if (!sourceTranslation) {
+      throw new Error(`No source translation found for question ${standardizedQuestion.uuid}`);
+    }
+
+    // Keep existing translations
+    const existingTranslations = standardizedQuestion.translations;
+    const existingLanguages = existingTranslations.map(t => t.languageCode);
+    const languagesToTranslate = targetLanguages.filter(lang => !existingLanguages.includes(lang));
+    
+    if (existingLanguages.length > 0) {
+      console.log(`   🌍 Already have: ${existingLanguages.join(', ')}`);
+    }
+    if (languagesToTranslate.length > 0) {
+      console.log(`   🎯 Need to create: ${languagesToTranslate.join(', ')} (${languagesToTranslate.length} of ${targetLanguages.length} languages)`);
+    } else {
+      console.log(`   ✅ This question already has all the languages we need!`);
+    }
+
+    // Translate to target languages - use sequential processing if rate limited
+    let newTranslations;
+    if (this.rateLimitState.isRateLimited || this.rateLimitState.rateLimitCount > 2) {
+      console.log("   ⚠️  Going one language at a time (rate limits require slower pace)");
+      newTranslations = [];
+      for (let i = 0; i < targetLanguages.length; i++) {
+        const lang = targetLanguages[i];
+        console.log(`   🌍 Working on ${lang} (${i + 1} of ${targetLanguages.length} languages)`);
+        
+        // Skip if translation already exists
+        const existingTrans = existingTranslations.find(t => t.languageCode === lang);
+        if (existingTrans) {
+          newTranslations.push(existingTrans);
+          console.log(`   ✅ ${lang}: Already done, using existing version`);
+          continue;
+        }
+
+        console.log(`   🔄 ${lang}: Creating translation...`);
+        const translation = await this.translateToLanguage(sourceTranslation, lang);
+        newTranslations.push(translation);
+        console.log(`   ✅ ${lang}: Done!`);
+        
+        // Add delay between languages when rate limited
+        if (i < targetLanguages.length - 1) {
+          const remaining = targetLanguages.length - 1 - i;
+          console.log(`   ⏳ Taking a 3-second break (${remaining} languages left)...`);
+          await this.sleep(3000);
+        }
+      }
+    } else {
+      // Translate to all target languages in parallel
+      const needTranslation = targetLanguages.filter(lang => 
+        !existingTranslations.find(t => t.languageCode === lang)
+      );
+      
+      if (needTranslation.length === 0) {
+        console.log(`   ✅ All ${targetLanguages.length} languages already available!`);
+        newTranslations = existingTranslations;
+      } else {
+        console.log(`   🚀 Translating ${needTranslation.length} languages at once (fast mode)`);
+        
+        const translationPromises = targetLanguages.map(async (lang, index) => {
+          // Skip if translation already exists
+          const existingTrans = existingTranslations.find(t => t.languageCode === lang);
+          if (existingTrans) {
+            return existingTrans;
+          }
+
+          const translation = await this.translateToLanguage(sourceTranslation, lang);
+          return translation;
+        });
+
+        try {
+          newTranslations = await Promise.all(translationPromises);
+          console.log(`   🎉 All ${targetLanguages.length} languages ready!`);
+        } catch (error) {
+          if (this.isRateLimitError(error)) {
+            console.log("   ⚠️  Hit rate limits! Let's try one language at a time...");
+            newTranslations = [];
+            for (let i = 0; i < targetLanguages.length; i++) {
+              const lang = targetLanguages[i];
+              console.log(`   🔄 Retrying ${lang} (${i + 1} of ${targetLanguages.length})`);
+              
+              const existingTrans = existingTranslations.find(t => t.languageCode === lang);
+              if (existingTrans) {
+                newTranslations.push(existingTrans);
+                console.log(`   ✅ ${lang}: Using existing version`);
+                continue;
+              }
+
+              const translation = await this.translateToLanguage(sourceTranslation, lang);
+              newTranslations.push(translation);
+              console.log(`   ✅ ${lang}: Success on retry!`);
+              
+              if (i < targetLanguages.length - 1) {
+                console.log(`   ⏳ Brief pause before next language...`);
+                await this.sleep(3000);
+              }
+            }
+          } else {
+            throw error;
+          }
+        }
+      }
+    }
+    
+    // Update question with all translations
+    standardizedQuestion.translations = newTranslations;
+    return standardizedQuestion;
+  }
+
+  async translateToLanguage(sourceTranslation, targetLanguage, maxRetries = 2) {
+    let retries = 0;
+    
+    while (retries < maxRetries) {
+      try {
+        // Try batch translation first for efficiency
+        console.log(`     🔄 ${targetLanguage}: Trying fast batch method...`);
+        const result = await this.batchTranslateTexts(sourceTranslation, targetLanguage);
+        console.log(`     ✅ ${targetLanguage}: Fast method worked!`);
+        return result;
+      } catch (error) {
+        console.log(`     ⚠️  ${targetLanguage}: Fast method didn't work - ${error.message.substring(0, 50)}...`);
+        console.log(`     🔄 ${targetLanguage}: Trying slower but more reliable method...`);
+        
+        // Fallback to individual translations
+        try {
+          const result = await this.individualTranslateTexts(sourceTranslation, targetLanguage);
+          console.log(`     ✅ ${targetLanguage}: Slower method succeeded!`);
+          return result;
+        } catch (fallbackError) {
+          if (fallbackError.message.includes('Rate limit') || fallbackError.status === 429) {
+            retries++;
+            const delay = Math.min(10000 * Math.pow(2, retries), 60000); // Max 60s delay
+            const delayMinutes = Math.floor(delay / 60000);
+            const delaySeconds = Math.floor((delay % 60000) / 1000);
+            
+            if (delayMinutes > 0) {
+              console.log(`     ⚠️  ${targetLanguage}: Hit rate limit! Waiting ${delayMinutes}m ${delaySeconds}s before retry ${retries} of ${maxRetries}...`);
+            } else {
+              console.log(`     ⚠️  ${targetLanguage}: Hit rate limit! Waiting ${delaySeconds}s before retry ${retries} of ${maxRetries}...`);
+            }
+            await this.sleep(delay);
+            continue;
+          }
+          console.log(`     ❌ ${targetLanguage}: Both methods failed - ${fallbackError.message.substring(0, 50)}...`);
+          throw fallbackError;
+        }
+      }
+    }
+    
+    throw new Error(`Couldn't translate to ${targetLanguage} after ${maxRetries} attempts`);
+  }
+
+  async batchTranslateTexts(sourceTranslation, targetLanguage) {
+    // Batch translate all text in one API call for efficiency
+    const allOptionValues = Object.values(sourceTranslation.options);
+    const optionsToTranslate = allOptionValues.filter(value => 
+      // Skip numeric/alphanumeric values
+      !/^-?\d+(\.\d+)?(%|cm|m)?$/.test(value) && !/^[A-Za-z0-9]+$/.test(value)
+    );
+    
+    const textsToTranslate = [
+      sourceTranslation.questionText,
+      ...optionsToTranslate,
+      sourceTranslation.explanation
+    ];
+
+    console.log(`       📝 Translating ${textsToTranslate.length} pieces of text to ${targetLanguage} all at once`);
+    console.log(`       📊 That's the question + ${optionsToTranslate.length} of ${allOptionValues.length} answer options + explanation`);
+
+    const batchTranslatePrompt = `Translate the following texts to ${targetLanguage}. 
+IMPORTANT: Return EXACTLY ${textsToTranslate.length} translations separated by "###SEPARATOR###".
+Do NOT add explanations, prefixes, or additional text.
+Format: translation1###SEPARATOR###translation2###SEPARATOR###translation3
+
+Texts to translate:
+${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
+
+    const batchResult = await this.translateWithLLM(
+      batchTranslatePrompt,
+      targetLanguage,
+      "Batch translation of quiz content"
+    );
+
+    console.log('Batch translation result:', batchResult);
+
+    const translations = batchResult.split('###SEPARATOR###').map(t => t.trim());
+    
+    console.log(`Expected ${textsToTranslate.length} translations, got ${translations.length}`);
+    console.log('Translations:', translations);
+    
+    if (translations.length !== textsToTranslate.length) {
+      throw new Error(`Batch translation count mismatch: expected ${textsToTranslate.length}, got ${translations.length}`);
+    }
+
+    // Reconstruct the translation object
+    let translationIndex = 0;
+    const questionText = translations[translationIndex++];
+    
+    const options = {};
+    for (const [key, value] of Object.entries(sourceTranslation.options)) {
+      // Keep numeric/alphanumeric values as is
+      if (/^-?\d+(\.\d+)?(%|cm|m)?$/.test(value) || /^[A-Za-z0-9]+$/.test(value)) {
+        options[key] = value;
+      } else {
+        options[key] = translations[translationIndex++];
+      }
+    }
+    
+    const explanation = translations[translationIndex++];
+
+    return {
+      languageCode: targetLanguage,
+      questionText,
+      options,
+      correctAnswer: sourceTranslation.correctAnswer,
+      explanation
+    };
+  }
+
+  async individualTranslateTexts(sourceTranslation, targetLanguage) {
+    const allOptions = Object.entries(sourceTranslation.options);
+    const optionsToTranslate = allOptions.filter(([key, value]) => 
+      !/^-?\d+(\.\d+)?(%|cm|m)?$/.test(value) && !/^[A-Za-z0-9]+$/.test(value)
+    );
+    
+    console.log(`       🔄 Translating to ${targetLanguage} piece by piece (reliable method)`);
+    console.log(`       📊 Will translate: question + ${optionsToTranslate.length} of ${allOptions.length} answer options + explanation`);
+    
+    // Translate question text
+    console.log(`       📝 Starting with the question...`);
+    const questionText = await this.translateWithLLM(
+      sourceTranslation.questionText,
+      targetLanguage,
+      "This is a quiz question"
+    );
+
+    // Adaptive delay based on rate limiting state
+    const baseDelay = this.rateLimitState.isRateLimited ? 3000 : 1000;
+    if (baseDelay > 1000) {
+      console.log(`       ⏳ Taking a ${baseDelay/1000}s break before answer options...`);
+    } else {
+      console.log(`       ⏳ Quick ${baseDelay/1000}s pause before answer options...`);
+    }
+    await this.sleep(baseDelay);
+
+    // Translate options
+    const options = {};
+    let optionCount = 0;
+    for (const [key, value] of Object.entries(sourceTranslation.options)) {
+      // Keep numeric/alphanumeric values as is
+      if (/^-?\d+(\.\d+)?(%|cm|m)?$/.test(value) || /^[A-Za-z0-9]+$/.test(value)) {
+        options[key] = value;
+        console.log(`       ✅ Option ${key}: Keeping "${value}" as-is (it's a number/code)`);
+      } else {
+        optionCount++;
+        console.log(`       🔄 Working on answer option ${optionCount} of ${optionsToTranslate.length} (${key})...`);
+        options[key] = await this.translateWithLLM(
+          value,
+          targetLanguage,
+          "This is a quiz answer option"
+        );
+        console.log(`       ✅ Option ${key} done!`);
+        
+        if (optionCount < optionsToTranslate.length) {
+          console.log(`       ⏳ Brief pause before next option...`);
+          await this.sleep(baseDelay);
+        }
+      }
+    }
+
+    // Translate explanation
+    console.log(`       🔄 Finally, translating the explanation...`);
+    const explanation = await this.translateWithLLM(
+      sourceTranslation.explanation,
+      targetLanguage,
+      "This is an explanation for the correct answer"
+    );
+    console.log(`       ✅ All done with ${targetLanguage}!`);
+
+    return {
+      languageCode: targetLanguage,
+      questionText,
+      options,
+      correctAnswer: sourceTranslation.correctAnswer,
+      explanation
+    };
   }
 
   async extractQuestionsWithRegex(text) {
@@ -830,7 +1269,7 @@ Text to translate: "${text}"`;
         };
         
         console.log(`Adding ${questions.length} questions extracted using fallback method`);
-        return await this.quizFactorApiService.addQuestionsToQuiz(payload);
+        return await this.quizFactorApiService.addQuestionsToQuiz(payload); 
       }
       throw error;
     }
@@ -1029,7 +1468,7 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
       }
     }
 
-    console.log(`Created ${chunks.length} chunks`);
+    console.log(`Created ${chunks.length} chunks`); 
     chunks.forEach((chunk, i) => {
       console.log(`Chunk ${i + 1} length: ${chunk.length}`);
     });
