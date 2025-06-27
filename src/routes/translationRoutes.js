@@ -7,7 +7,10 @@ import {
   // translateQuestion,
   extractQuestions,
   translateExtractedQuestions,
-  getQuizInfo
+  getQuizInfo,
+  getTranslationStatus,
+  getQueueStatus,
+  cancelTranslation
 } from '../controllers/translationController.js';
 import { uploadAny } from '../middleware/upload.js';
 
@@ -29,5 +32,10 @@ router.post('/quiz/:quizUuid/extract', uploadAny, extractQuestions);
 
 // Step 2: Translate the extracted questions
 router.post('/quiz/:quizUuid/translate-extracted', translateExtractedQuestions);
+
+// Queue management routes
+router.get('/status/:queueId', getTranslationStatus);
+router.get('/queue-status', getQueueStatus);
+router.delete('/cancel/:queueId', cancelTranslation);
 
 export default router; 
