@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "quizUuid": "964aaee3-9319-463f-ad42-7f2dc5c3817f",
+    "status": "pre-api-send",
+    "timestamp": "2025-06-28T23:39:02.118Z",
+    "totalQuestions": 10,
+    "extractionSource": "translationService",
+    "nodeVersion": "v23.11.0",
+    "platform": "darwin",
+    "languages": [
+      "en"
+    ],
+    "questionTypes": [
+      "single-choice"
+    ],
+    "sampleQuestion": {
+      "uuid": "3b92b543-424a-4875-803c-c39df7813deb",
+      "questionType": "single-choice",
+      "translationCount": 1,
+      "firstTranslation": "Which of the following is not an input device?..."
+    }
+  },
+  "questions": [
+    {
+      "uuid": "3b92b543-424a-4875-803c-c39df7813deb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which of the following is not an input device?",
+          "options": {
+            "option_1": "Scanner",
+            "option_2": "Microphone",
+            "option_3": "Speaker",
+            "option_4": "Trackball"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Speaker is an output device that produces sound, while the other options are input devices used to provide information to a computer system."
+        }
+      ]
+    },
+    {
+      "uuid": "8502f914-8204-4a55-accd-2dd31d2f256c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which component acts as the nerve centre that sends control signals to all other units?",
+          "options": {
+            "option_1": "Control Unit",
+            "option_2": "Software",
+            "option_3": "ALU",
+            "option_4": "Memory"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "The Control Unit is responsible for coordinating and directing operations of other computer components, acting as the central management system of the computer processor."
+        }
+      ]
+    },
+    {
+      "uuid": "90737c11-39a4-43ee-a0a6-d210e3e1b662",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Random Access Memory and Read Only Memory are examples of:",
+          "options": {
+            "option_1": "Auxiliary Memory",
+            "option_2": "Primary Memory",
+            "option_3": "Secondary Memory",
+            "option_4": "Both primary and secondary memory"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "RAM and ROM are both types of primary memory, which are directly accessible by the computer's processor and are located inside the computer."
+        }
+      ]
+    },
+    {
+      "uuid": "a999e485-2ef8-49cc-9a23-17af2df448fe",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "GIMP, Adobe Photoshop, Corel Draw, and Picasa are examples of:",
+          "options": {
+            "option_1": "Spreadsheets",
+            "option_2": "Word Processors",
+            "option_3": "Desktop publishing",
+            "option_4": "Presentation"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "These are graphic design and image editing software used for desktop publishing, allowing users to create and manipulate visual content."
+        }
+      ]
+    },
+    {
+      "uuid": "54e9772f-cfbf-4b9c-886d-867969951cf5",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "It allows a visited website to store its own information about a user on the user's computer.",
+          "options": {
+            "option_1": "Spam",
+            "option_2": "Malware",
+            "option_3": "Cookies",
+            "option_4": "Adware"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Cookies are small text files stored on a user's computer by websites to remember user preferences and track browsing behavior."
+        }
+      ]
+    },
+    {
+      "uuid": "cb479168-f4d6-45b7-95fa-f7f20cf1d26e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is a Form in HTML?",
+          "options": {
+            "option_1": "A container for collecting user input",
+            "option_2": "A type of CSS styling",
+            "option_3": "A JavaScript function",
+            "option_4": "A database connection method"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "A form in HTML is a container element used to collect and submit user input, allowing users to enter data that can be sent to a server for processing."
+        }
+      ]
+    },
+    {
+      "uuid": "ef3d392f-7d5a-4413-9f7f-40737250a964",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does a Form consist of?",
+          "options": {
+            "option_1": "Only text inputs",
+            "option_2": "Various input elements like text fields, checkboxes, radio buttons, submit buttons",
+            "option_3": "Only dropdown menus",
+            "option_4": "Purely decorative elements"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "A form consists of multiple input elements including text fields, checkboxes, radio buttons, dropdown menus, submit and reset buttons that allow users to input and submit different types of data."
+        }
+      ]
+    },
+    {
+      "uuid": "f42c4918-dbe1-46f4-8e19-c9d7448bb978",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which tag is used to insert a Form in an HTML document?",
+          "options": {
+            "option_1": "<input>",
+            "option_2": "<body>",
+            "option_3": "<form>",
+            "option_4": "<submit>"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "The <form> tag is used to create a form in an HTML document. It is a container tag that wraps all the form elements together."
+        }
+      ]
+    },
+    {
+      "uuid": "99354ec1-d7c8-4248-9f30-d2158e951cd3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What values can be used with the Method attribute of the Form?",
+          "options": {
+            "option_1": "Only GET",
+            "option_2": "Only POST",
+            "option_3": "GET and POST",
+            "option_4": "DELETE and UPDATE"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "The Method attribute of a form can have two primary values: GET (which sends form data in the URL) and POST (which sends form data in the HTTP request body)."
+        }
+      ]
+    },
+    {
+      "uuid": "ceab16fa-f455-4c5d-8077-55e1efb8de53",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How is a Submit button different from a Reset Button in a Form?",
+          "options": {
+            "option_1": "Submit sends data, Reset clears form fields",
+            "option_2": "Submit clears data, Reset sends form",
+            "option_3": "They are exactly the same",
+            "option_4": "Submit creates a new form, Reset deletes the form"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "A Submit button sends the form data to the server for processing, while a Reset button clears all form fields, returning them to their original values."
+        }
+      ]
+    }
+  ]
+}

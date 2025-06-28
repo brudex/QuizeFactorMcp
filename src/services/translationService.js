@@ -1,5 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import fs from "fs";
+import path from "path";
 import { QuizFactorApiService } from "./quizFactorApiService.js";
 import { config } from "../config/config.js";
 import llmService from './llmService.js';
@@ -17,7 +19,7 @@ export class TranslationService {
         "Content-Type": "application/json",
         "X-API-Version": "1.0",
       },
-      timeout: 30000,
+      timeout: 120000, // Increased to 2 minutes for large payloads
     });
 
     // Rate limiting state
@@ -432,13 +434,15 @@ Text to translate: "${text}"`;
               // If translation exists, preserve it
               const existingTrans = existingTranslations.get(lang);
               if (existingTrans) {
-                return {
-                  languageCode: lang,
-                  questionText: existingTrans.questionText,
-                  options: existingTrans.options,
-                  correctAnswer: existingTrans.correctAnswer,
-                  explanation: existingTrans.explanation
-                };
+                              return {
+                languageCode: lang,
+                questionText: existingTrans.questionText,
+                options: existingTrans.options,
+                correctAnswer: Array.isArray(existingTrans.correctAnswer) 
+                  ? existingTrans.correctAnswer 
+                  : [existingTrans.correctAnswer], // Ensure correctAnswer is always an array
+                explanation: existingTrans.explanation
+              };
               }
 
               // Translate question text
@@ -469,7 +473,9 @@ Text to translate: "${text}"`;
                 languageCode: lang,
                 questionText,
                 options,
-                correctAnswer: sourceTranslation.correctAnswer, // Keep the same correct answer key
+                correctAnswer: Array.isArray(sourceTranslation.correctAnswer) 
+                  ? sourceTranslation.correctAnswer 
+                  : [sourceTranslation.correctAnswer], // Ensure correctAnswer is always an array
                 explanation
               };
             })
@@ -493,7 +499,7 @@ Text to translate: "${text}"`;
       };
 
       // Log the payload for debugging
-      console.log('\n=== API Request Payload ===');
+      console.log('\n=== API Request Summary ===');
       console.log('Quiz UUID:', quizUuid);
       console.log('Number of questions:', translatedQuestions.length);
       console.log('First question sample:');
@@ -509,21 +515,113 @@ Text to translate: "${text}"`;
           console.log('  - Correct Answer:', trans.correctAnswer);
         }
       }
-      console.log('\nFull payload:', JSON.stringify(payload, null, 2));
-      console.log('=== End API Request Payload ===\n');
+      console.log('=== End API Request Summary ===\n');
 
-      const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
-
-      if (updateResponse.data?.status !== '00') {
-        throw new Error(`Failed to update quiz questions: ${updateResponse.data?.message || 'Unknown error'}`); 
+      // Chunk questions into smaller batches to avoid "request entity too large" error
+      const batchSize = 25; // Reduced from 100 to 25 due to server limitations
+      const questionBatches = [];
+      
+      for (let i = 0; i < translatedQuestions.length; i += batchSize) {
+        questionBatches.push(translatedQuestions.slice(i, i + batchSize));
       }
+
+      console.log(`📦 Chunking ${translatedQuestions.length} questions into ${questionBatches.length} batches of ${batchSize}`);
+
+      // Send each batch to the API
+      const batchResponses = [];
+      for (let i = 0; i < questionBatches.length; i++) {
+        const batch = questionBatches[i];
+        const batchPayload = {
+          quizUuid,
+          questions: batch
+        };
+
+        // Log payload size for debugging
+        const payloadSize = JSON.stringify(batchPayload).length;
+        console.log(`📤 Sending batch ${i + 1}/${questionBatches.length} with ${batch.length} questions (payload size: ${(payloadSize / 1024).toFixed(1)}KB)...`);
+        
+        try {
+          const updateResponse = await this.client.post("/api/ai/add-quiz-questions", batchPayload);
+
+          if (updateResponse.data?.status !== '00') {
+            throw new Error(`Failed to update quiz questions batch ${i + 1}: ${updateResponse.data?.message || 'Unknown error'}`); 
+          }
+
+          batchResponses.push(updateResponse.data);
+          console.log(`✅ Batch ${i + 1}/${questionBatches.length} completed successfully`);
+
+          // Add a small delay between batches to avoid overwhelming the server
+          if (i < questionBatches.length - 1) {
+            console.log(`⏳ Brief pause before next batch...`);
+            await this.sleep(2000); // 2 second delay
+          }
+        } catch (error) {
+          console.error(`❌ Failed to send batch ${i + 1}/${questionBatches.length}:`, error.message);
+          
+          // If it's a 500 error and we have more than 5 questions, try splitting into smaller batches
+          if (error.response?.status === 500 && batch.length > 5) {
+            console.log(`⚠️  Server error with ${batch.length} questions. Trying smaller batches of 5...`);
+            
+            try {
+              const smallBatches = [];
+              for (let j = 0; j < batch.length; j += 5) {
+                smallBatches.push(batch.slice(j, j + 5));
+              }
+              
+              for (let k = 0; k < smallBatches.length; k++) {
+                const smallBatch = smallBatches[k];
+                const smallPayload = {
+                  quizUuid,
+                  questions: smallBatch
+                };
+                
+                const smallPayloadSize = JSON.stringify(smallPayload).length;
+                console.log(`📤 Trying mini-batch ${k + 1}/${smallBatches.length} with ${smallBatch.length} questions (${(smallPayloadSize / 1024).toFixed(1)}KB)...`);
+                
+                const smallResponse = await this.client.post("/api/ai/add-quiz-questions", smallPayload);
+                
+                if (smallResponse.data?.status !== '00') {
+                  throw new Error(`Failed to add mini-batch ${k + 1}: ${smallResponse.data?.message || 'Unknown error'}`);
+                }
+                
+                console.log(`✅ Mini-batch ${k + 1}/${smallBatches.length} succeeded`);
+                
+                // Brief pause between mini-batches
+                if (k < smallBatches.length - 1) {
+                  await this.sleep(1000);
+                }
+              }
+              
+              // Use the last small response for the main response
+              batchResponses.push(smallBatches[smallBatches.length - 1]);
+              console.log(`🎉 Successfully processed ${batch.length} questions using smaller batches`);
+              
+            } catch (smallBatchError) {
+              console.error(`❌ Even smaller batches failed:`, smallBatchError.message);
+              throw new Error(`Failed to update quiz questions batch ${i + 1}: ${smallBatchError.message}`);
+            }
+          } else {
+            throw new Error(`Failed to update quiz questions batch ${i + 1}: ${error.message}`);
+          }
+        }
+      }
+
+      console.log(`🎉 All ${questionBatches.length} batches sent successfully!`);
+
+      // Combine all batch responses (use the last response as the main response)
+      const finalResponse = batchResponses[batchResponses.length - 1];
 
       return {
         quizUuid,
         questions: translatedQuestions,
         updatedLanguages: targetLanguages,
         timestamp: new Date().toISOString(),
-        response: updateResponse.data
+        response: finalResponse,
+        batchInfo: {
+          totalBatches: questionBatches.length,
+          batchSize: batchSize,
+          totalQuestions: translatedQuestions.length
+        }
       };
     } catch (error) {
       console.error("Quiz questions translation error:", error);
@@ -605,7 +703,9 @@ Text to translate: "${text}"`;
         languageCode: "en",
         questionText: question.questionText || question.text || "Question text not available",
         options: question.options || {},
-        correctAnswer: question.correctAnswer || "option_1",
+        correctAnswer: Array.isArray(question.correctAnswer) 
+          ? question.correctAnswer 
+          : [question.correctAnswer || "option_1"], // Ensure correctAnswer is always an array
         explanation: question.explanation || "No explanation provided"
       };
       
@@ -670,6 +770,9 @@ Text to translate: "${text}"`;
       // Process questions in parallel with controlled concurrency
       const translatedQuestions = await this.processQuestionsInBatches(questionsData, targetLanguages, startTime, totalOperations);
 
+      // Write translated questions to file before sending to server
+      await this.writeQuestionsToFile(translatedQuestions, quizUuid, 'translated');
+
       // Prepare API payload
       const payload = {
         quizUuid,
@@ -682,14 +785,117 @@ Text to translate: "${text}"`;
       console.log('Target languages:', targetLanguages.join(', '));
       console.log('=== End API Request Summary ===\n');
 
-      // Send to API
-      const updateResponse = await this.client.post("/api/ai/update-quiz-questions", payload); 
-
-      if (updateResponse.data?.status !== '00') {
-        throw new Error(`Failed to update quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
+      // Chunk questions into smaller batches to avoid "request entity too large" error
+      const batchSize = 25; // Reduced from 100 to 25 due to server limitations
+      const questionBatches = [];
+      
+      for (let i = 0; i < translatedQuestions.length; i += batchSize) {
+        questionBatches.push(translatedQuestions.slice(i, i + batchSize));
       }
 
-      console.log("Update quiz questions response:", updateResponse.data);
+      if (questionBatches.length > 1) {
+        console.log(`📦 Chunking ${translatedQuestions.length} questions into ${questionBatches.length} batches of ${batchSize}`);
+      }
+
+      // Send each batch to the API
+      const batchResponses = [];
+      for (let i = 0; i < questionBatches.length; i++) {
+        const batch = questionBatches[i];
+        const batchPayload = {
+          quizUuid,
+          questions: batch
+        };
+
+        // Log payload size for debugging
+        const payloadSize = JSON.stringify(batchPayload).length;
+        if (questionBatches.length > 1) {
+          console.log(`📤 Sending batch ${i + 1}/${questionBatches.length} with ${batch.length} questions (payload size: ${(payloadSize / 1024).toFixed(1)}KB)...`);
+        }
+        
+        try {
+          const updateResponse = await this.client.post("/api/ai/update-quiz-questions", batchPayload);
+
+          if (updateResponse.data?.status !== '00') {
+            throw new Error(`Failed to update quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${updateResponse.data?.message || 'Unknown error'}`);
+          }
+
+          batchResponses.push(updateResponse.data);
+          
+          if (questionBatches.length > 1) {
+            console.log(`✅ Batch ${i + 1}/${questionBatches.length} completed successfully`);
+
+            // Add a small delay between batches to avoid overwhelming the server
+            if (i < questionBatches.length - 1) {
+              console.log(`⏳ Brief pause before next batch...`);
+              await this.sleep(2000); // 2 second delay
+            }
+          }
+        } catch (error) {
+          console.error(`❌ Failed to send${questionBatches.length > 1 ? ` batch ${i + 1}/${questionBatches.length}` : ''}:`, error.message);
+          console.error(`🔍 Error details:`, {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            message: error.message,
+            timeout: error.code === 'ECONNABORTED' ? 'API call timed out' : 'No timeout',
+            url: error.config?.url,
+            method: error.config?.method
+          });
+          
+          // If it's a 500 error and we have more than 5 questions, try splitting into smaller batches
+          if (error.response?.status === 500 && batch.length > 5) {
+            console.log(`⚠️  Server error with ${batch.length} questions. Trying smaller batches of 5...`);
+            
+            try {
+              const smallBatches = [];
+              for (let j = 0; j < batch.length; j += 5) {
+                smallBatches.push(batch.slice(j, j + 5));
+              }
+              
+              for (let k = 0; k < smallBatches.length; k++) {
+                const smallBatch = smallBatches[k];
+                const smallPayload = {
+                  quizUuid,
+                  questions: smallBatch
+                };
+                
+                const smallPayloadSize = JSON.stringify(smallPayload).length;
+                console.log(`📤 Trying mini-batch ${k + 1}/${smallBatches.length} with ${smallBatch.length} questions (${(smallPayloadSize / 1024).toFixed(1)}KB)...`);
+                
+                const smallResponse = await this.client.post("/api/ai/update-quiz-questions", smallPayload);
+                
+                if (smallResponse.data?.status !== '00') {
+                  throw new Error(`Failed to update mini-batch ${k + 1}: ${smallResponse.data?.message || 'Unknown error'}`);
+                }
+                
+                console.log(`✅ Mini-batch ${k + 1}/${smallBatches.length} succeeded`);
+                
+                // Brief pause between mini-batches
+                if (k < smallBatches.length - 1) {
+                  await this.sleep(1000);
+                }
+              }
+              
+              // Use the last small response for the main response
+              batchResponses.push(smallBatches[smallBatches.length - 1]);
+              console.log(`🎉 Successfully processed ${batch.length} questions using smaller batches`);
+              
+            } catch (smallBatchError) {
+              console.error(`❌ Even smaller batches failed:`, smallBatchError.message);
+              throw new Error(`Failed to update quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${smallBatchError.message}`);
+            }
+          } else {
+            throw new Error(`Failed to update quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${error.message}`);
+          }
+        }
+      }
+
+      if (questionBatches.length > 1) {
+        console.log(`🎉 All ${questionBatches.length} batches sent successfully!`);
+      }
+
+      // Combine all batch responses (use the last response as the main response)
+      const finalResponse = batchResponses[batchResponses.length - 1];
+      console.log("Update quiz questions response:", finalResponse);
 
       // Final summary
       const endTime = Date.now();
@@ -714,9 +920,14 @@ Text to translate: "${text}"`;
         questions: translatedQuestions,
         updatedLanguages: targetLanguages,
         timestamp: new Date().toISOString(),
-        response: updateResponse.data,
-        status: updateResponse.data?.status,
-        message: updateResponse.data?.message,
+        response: finalResponse,
+        status: finalResponse?.status,
+        message: finalResponse?.message,
+        batchInfo: {
+          totalBatches: questionBatches.length,
+          batchSize: batchSize,
+          totalQuestions: translatedQuestions.length
+        },
         statistics: {
           totalQuestions: questionsData.length,
           totalLanguages: targetLanguages.length,
@@ -1107,7 +1318,9 @@ ${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
       languageCode: targetLanguage,
       questionText,
       options,
-      correctAnswer: sourceTranslation.correctAnswer,
+      correctAnswer: Array.isArray(sourceTranslation.correctAnswer) 
+        ? sourceTranslation.correctAnswer 
+        : [sourceTranslation.correctAnswer], // Ensure correctAnswer is always an array
       explanation
     };
   }
@@ -1176,7 +1389,9 @@ ${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
       languageCode: targetLanguage,
       questionText,
       options,
-      correctAnswer: sourceTranslation.correctAnswer,
+      correctAnswer: Array.isArray(sourceTranslation.correctAnswer) 
+        ? sourceTranslation.correctAnswer 
+        : [sourceTranslation.correctAnswer], // Ensure correctAnswer is always an array
       explanation
     };
   }
@@ -1231,7 +1446,7 @@ ${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
               languageCode: "en",
               questionText: questionText,
               options: options,
-              correctAnswer: correctAnswer,
+              correctAnswer: Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer], // Convert to array as server expects array format
               explanation: "Extracted using fallback method due to API quota limits."
             }]
           });
@@ -1493,7 +1708,7 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
               languageCode: "en",
               questionText: q.content || q.questionText,
               options: q.options,
-              correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer,
+              correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer], // Keep array format or convert string to array
               explanation: q.explanation || "No explanation provided"
             }]
           }));
@@ -1503,6 +1718,9 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
           }
 
           console.log(`Using ${questions.length} pre-extracted questions`);
+
+          // Write questions to file before sending to server
+          await this.writeQuestionsToFile(questions, quizUuid || 'temp', 'pre-extracted');
 
           // If no quiz UUID provided, create a new quiz
           if (!quizUuid) {
@@ -1551,10 +1769,13 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
           languageCode: "en",
           questionText: q.questionText,
           options: q.options,
-          correctAnswer: q.correctAnswer,
+          correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer], // Ensure correctAnswer is always an array
           explanation: q.explanation
         }]
       }));
+
+      // Write questions to file before sending to server
+      await this.writeQuestionsToFile(questions, quizUuid || 'temp', 'llm-extracted');
 
       // If no quiz UUID provided, create a new quiz
       if (!quizUuid) {
@@ -1607,23 +1828,142 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
         }
       }
       console.log('=== End Adding Questions to Quiz ===\n');
-  
 
-      // Send to API
-      const updateResponse = await this.client.post("/api/ai/add-quiz-questions", payload);
+      // Write questions to file before sending to server for backup
+      await this.writeQuestionsToFile(questions, quizUuid, 'pre-api-send');
 
-
-      if (updateResponse.data?.status !== '00') {
-        throw new Error(`Failed to add quiz questions: ${updateResponse.data?.message || 'Unknown error'}`);
+      // Chunk questions into smaller batches to avoid "request entity too large" error
+      const batchSize = 100; // Reduced to 100 to avoid "request entity too large" error
+      const questionBatches = [];
+      
+      for (let i = 0; i < questions.length; i += batchSize) {
+        questionBatches.push(questions.slice(i, i + batchSize));
       }
+
+      if (questionBatches.length > 1) {
+        console.log(`📦 Chunking ${questions.length} questions into ${questionBatches.length} batches of ${batchSize}`);
+      }
+
+      // Send each batch to the API
+      const batchResponses = [];
+      for (let i = 0; i < questionBatches.length; i++) {
+        const batch = questionBatches[i];
+        const batchPayload = {
+          quizUuid,
+          questions: batch
+        };
+
+        // Log payload size for debugging
+        const payloadSize = JSON.stringify(batchPayload).length;
+        if (questionBatches.length > 1) {
+          console.log(`📤 Sending batch ${i + 1}/${questionBatches.length} with ${batch.length} questions (payload size: ${(payloadSize / 1024).toFixed(1)}KB)...`);
+        } else {
+          console.log(`📤 Sending ${batch.length} questions (payload size: ${(payloadSize / 1024).toFixed(1)}KB)...`);
+        }
+        
+        try {
+          console.log(`🚀 Making API call for batch ${i + 1}/${questionBatches.length}...`);
+          const updateResponse = await this.client.post("/api/ai/add-quiz-questions", batchPayload);
+          console.log(`✅ API call completed for batch ${i + 1}/${questionBatches.length}`);
+
+          if (updateResponse.data?.status !== '00') {
+            console.error(`❌ API returned error status:`, updateResponse.data);
+            throw new Error(`Failed to add quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${updateResponse.data?.message || 'Unknown error'}`);
+          }
+
+          console.log('updateResponse>>>>>', updateResponse);
+
+          batchResponses.push(updateResponse.data);
+          
+          if (questionBatches.length > 1) {
+            console.log(`✅ Batch ${i + 1}/${questionBatches.length} completed successfully`);
+
+            // Add a small delay between batches to avoid overwhelming the server
+            if (i < questionBatches.length - 1) {
+              console.log(`⏳ Brief pause before next batch...`);
+              await this.sleep(2000); // 2 second delay
+            }
+          } else {
+            console.log(`✅ Questions added successfully`);
+          }
+        } catch (error) {
+          console.error(`❌ Failed to send${questionBatches.length > 1 ? ` batch ${i + 1}/${questionBatches.length}` : ''}:`, error.message);
+          console.error(`🔍 Error details:`, {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            message: error.message,
+            timeout: error.code === 'ECONNABORTED' ? 'API call timed out' : 'No timeout',
+            url: error.config?.url,
+            method: error.config?.method
+          });
+          
+          // If it's a 500 error and we have more than 5 questions, try splitting into smaller batches
+          if (error.response?.status === 500 && batch.length > 5) {
+            console.log(`⚠️  Server error with ${batch.length} questions. Trying smaller batches of 5...`);
+            
+            try {
+              const smallBatches = [];
+              for (let j = 0; j < batch.length; j += 5) {
+                smallBatches.push(batch.slice(j, j + 5));
+              }
+              
+              for (let k = 0; k < smallBatches.length; k++) {
+                const smallBatch = smallBatches[k];
+                const smallPayload = {
+                  quizUuid,
+                  questions: smallBatch
+                };
+                
+                const smallPayloadSize = JSON.stringify(smallPayload).length;
+                console.log(`📤 Trying mini-batch ${k + 1}/${smallBatches.length} with ${smallBatch.length} questions (${(smallPayloadSize / 1024).toFixed(1)}KB)...`);
+                
+                const smallResponse = await this.client.post("/api/ai/add-quiz-questions", smallPayload);
+                
+                if (smallResponse.data?.status !== '00') {
+                  throw new Error(`Failed to add mini-batch ${k + 1}: ${smallResponse.data?.message || 'Unknown error'}`);
+                }
+                
+                console.log(`✅ Mini-batch ${k + 1}/${smallBatches.length} succeeded`);
+                
+                // Brief pause between mini-batches
+                if (k < smallBatches.length - 1) {
+                  await this.sleep(1000);
+                }
+              }
+              
+              // Use the last small response for the main response
+              batchResponses.push(smallBatches[smallBatches.length - 1]);
+              console.log(`🎉 Successfully processed ${batch.length} questions using smaller batches`);
+              
+            } catch (smallBatchError) {
+              console.error(`❌ Even smaller batches failed:`, smallBatchError.message);
+              throw new Error(`Failed to add quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${smallBatchError.message}`);
+            }
+          } else {
+            throw new Error(`Failed to add quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${error.message}`);
+          }
+        }
+      }
+
+      if (questionBatches.length > 1) {
+        console.log(`🎉 All ${questionBatches.length} batches sent successfully!`);
+      }
+
+      // Combine all batch responses (use the last response as the main response)
+      const finalResponse = batchResponses[batchResponses.length - 1];
 
       return {
         quizUuid,
         questions,
         timestamp: new Date().toISOString(),
-        response: updateResponse.data,
-        status: updateResponse.data?.status,
-        message: updateResponse.data?.message
+        response: finalResponse,
+        status: finalResponse?.status,
+        message: finalResponse?.message,
+        batchInfo: {
+          totalBatches: questionBatches.length,
+          batchSize: batchSize,
+          totalQuestions: questions.length
+        }
       };
     } catch (error) {
       console.error("Add questions error:", error);
@@ -1675,7 +2015,7 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
           languageCode: "en",
           questionText,
           options,
-          correctAnswer,
+          correctAnswer: Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer], // Ensure correctAnswer is always an array
           explanation,
         },
       ],
@@ -1759,6 +2099,74 @@ Text: "${text}"`;
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Helper method to write questions to file before sending to server
+  // This creates backup files in ./extracted-questions/ directory with the following structure:
+  // {
+  //   "metadata": {
+  //     "quizUuid": "...",
+  //     "status": "extracted|translated|pre-api-send|etc",
+  //     "timestamp": "2024-01-01T12:00:00.000Z",
+  //     "totalQuestions": 123,
+  //     "languages": ["en", "es", "fr"],
+  //     "questionTypes": ["single-choice"],
+  //     "sampleQuestion": { "uuid": "...", "questionType": "...", "..." }
+  //   },
+  //   "questions": [...]
+  // }
+  async writeQuestionsToFile(questions, quizUuid, status = 'extracted') {
+    try {
+      // Create output directory if it doesn't exist
+      const outputDir = path.join(process.cwd(), 'extracted-questions');
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `questions_${quizUuid}_${status}_${timestamp}.json`;
+      const filepath = path.join(outputDir, filename);
+
+      // Prepare data to write
+      const dataToWrite = {
+        metadata: {
+          quizUuid,
+          status,
+          timestamp: new Date().toISOString(),
+          totalQuestions: questions.length,
+          extractionSource: 'translationService',
+          nodeVersion: process.version,
+          platform: process.platform,
+          languages: questions.length > 0 && questions[0].translations 
+            ? questions[0].translations.map(t => t.languageCode) 
+            : ['unknown'],
+          questionTypes: [...new Set(questions.map(q => q.questionType || 'unknown'))],
+          sampleQuestion: questions.length > 0 ? {
+            uuid: questions[0].uuid,
+            questionType: questions[0].questionType,
+            translationCount: questions[0].translations?.length || 0,
+            firstTranslation: questions[0].translations?.[0]?.questionText?.substring(0, 100) + '...' || 'N/A'
+          } : null
+        },
+        questions: questions
+      };
+
+      // Write to file
+      fs.writeFileSync(filepath, JSON.stringify(dataToWrite, null, 2), 'utf8');
+      
+      console.log(`📁 Questions saved to file: ${filename}`);
+      console.log(`📍 Location: ${filepath}`);
+      console.log(`📊 Total questions: ${questions.length}`);
+      console.log(`🏷️  Status: ${status}`);
+      console.log(`📄 File contains metadata + questions in JSON format`);
+
+      return filepath;
+    } catch (error) {
+      console.error("Error writing questions to file:", error);
+      // Don't throw error here - file writing failure shouldn't stop the main process
+      return null;
+    }
   }
 }
 
