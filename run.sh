@@ -14,6 +14,6 @@ npm install
 
 if command -v pm2 ; then
   echo "Restarting Node Processing Manager PM2"
-  pm2 stop ./src/server.js --name QuizFactorMCP
+  pm2 start ./src/server.js --name QuizFactorMCP
 fi
 echo ".........ALL DONE DEPLOY COMPLETE........"
