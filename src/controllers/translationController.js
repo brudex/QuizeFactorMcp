@@ -380,8 +380,9 @@ export const extractQuestions = async (req, res) => {
         
         console.log("Questions extracted successfully:", {
           quizUuid,
-          questionCount: extractedQuestions.questions.length,
-          status: extractedQuestions.status
+          questionCount: extractedQuestions.questions?.length || 0, 
+          status: extractedQuestions.status,
+          message: extractedQuestions.message
         });
 
       } catch (error) {

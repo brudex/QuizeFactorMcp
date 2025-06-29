@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "quizUuid": "quiz-123",
+    "status": "translated",
+    "timestamp": "2025-06-29T02:45:07.987Z",
+    "totalQuestions": 1,
+    "extractionSource": "translationService",
+    "nodeVersion": "v23.11.0",
+    "platform": "darwin",
+    "languages": [
+      "fr",
+      "es"
+    ],
+    "questionTypes": [
+      "single-choice"
+    ],
+    "sampleQuestion": {
+      "uuid": "question-456",
+      "questionType": "single-choice",
+      "translationCount": 2,
+      "firstTranslation": "Quel est le résultat de 2x + 3 lorsque x = 5 ?..."
+    }
+  },
+  "questions": [
+    {
+      "uuid": "question-456",
+      "questionType": "single-choice",
+      "difficulty": "hard",
+      "points": 2,
+      "translations": [
+        {
+          "languageCode": "fr",
+          "questionText": "Quel est le résultat de 2x + 3 lorsque x = 5 ?",
+          "options": {
+            "first": "10",
+            "second": "13",
+            "third": "15",
+            "fourth": "12",
+            "fifth": "14"
+          },
+          "correctAnswer": [
+            "second"
+          ],
+          "explanation": "Pour résoudre cela, substituez x = 5 dans 2x + 3 : 2(5) + 3 = 10 + 3 = 13"
+        },
+        {
+          "languageCode": "es",
+          "questionText": "¿Cuál es el resultado de 2x + 3 cuando x = 5?",
+          "options": {
+            "first": "10",
+            "second": "13",
+            "third": "15",
+            "fourth": "12",
+            "fifth": "14"
+          },
+          "correctAnswer": [
+            "second"
+          ],
+          "explanation": "Para resolver esto, sustituya x = 5 en 2x + 3: 2(5) + 3 = 10 + 3 = 13"
+        }
+      ]
+    }
+  ]
+}

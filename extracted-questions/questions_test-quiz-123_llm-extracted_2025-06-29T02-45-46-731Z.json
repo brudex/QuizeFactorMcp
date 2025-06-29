@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "quizUuid": "test-quiz-123",
+    "status": "llm-extracted",
+    "timestamp": "2025-06-29T02:45:46.732Z",
+    "totalQuestions": 2,
+    "extractionSource": "translationService",
+    "nodeVersion": "v23.11.0",
+    "platform": "darwin",
+    "languages": [
+      "en"
+    ],
+    "questionTypes": [
+      "single-choice"
+    ],
+    "sampleQuestion": {
+      "uuid": "055b2d5f-5cda-4f95-9fff-849e3eeebf8d",
+      "questionType": "single-choice",
+      "translationCount": 1,
+      "firstTranslation": "What is AWS?..."
+    }
+  },
+  "questions": [
+    {
+      "uuid": "055b2d5f-5cda-4f95-9fff-849e3eeebf8d",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is AWS?",
+          "options": {
+            "option_1": "AWS?\nA) Amazon Web Services\nB) Amazon Web Shop\nC) Apple Web Services\nD) None of the above"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Extracted using fallback method due to API quota limits."
+        }
+      ]
+    },
+    {
+      "uuid": "cc48bb03-78bd-4d52-b9da-6ee9337ae9b6",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is EC2?",
+          "options": {
+            "option_1": "EC2?\nA) Elastic Compute Cloud\nB) Enhanced Cloud Computing\nC) Elastic Container Cloud\nD) Extended Compute Cloud"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Extracted using fallback method due to API quota limits."
+        }
+      ]
+    }
+  ]
+}

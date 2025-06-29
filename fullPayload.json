@@ -1,0 +1,329 @@
+{
+  "quizUuid": "964aaee3-9319-463f-ad42-7f2dc5c3817f",
+  "questions": [
+    {
+      "uuid": "7115dc2c-86e1-4ec4-992f-2dcbea48a66b",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the DB engines which can be used in AWS RDS?",
+          "options": {
+            "option_1": "MariaDB, MySQL, MS SQL, PostgreSQL, Oracle DB",
+            "option_2": "MongoDB, Redis, Cassandra, SQLite",
+            "option_3": "SAP HANA, DB2, Sybase, Informix",
+            "option_4": "Access, Filemaker, Paradox"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "AWS RDS supports MariaDB, MySQL, MS SQL DB, PostgreSQL, and Oracle DB as its primary database engines."
+        }
+      ]
+    },
+    {
+      "uuid": "3dc0a1ca-0116-4dcb-b2c4-e6d34f9422a3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the Status Checks in AWS EC2?",
+          "options": {
+            "option_1": "Performance monitoring checks",
+            "option_2": "System Status Checks and Instance Status Checks",
+            "option_3": "Network security checks",
+            "option_4": "Cost optimization checks"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "AWS EC2 has two types of status checks: System Status Checks (which look into problems needing AWS intervention) and Instance Status Checks (which identify issues requiring user intervention)."
+        }
+      ]
+    },
+    {
+      "uuid": "d891ecbf-62ea-4935-9bef-f10b28145716",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "To establish a peering connection between two VPCs, what conditions must be met?",
+          "options": {
+            "option_1": "VPCs must be in the same region and account",
+            "option_2": "CIDR blocks must overlap",
+            "option_3": "CIDR blocks should not overlap",
+            "option_4": "VPCs must be in different regions"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "To establish a VPC peering connection, the VPCs should be in the same region and can belong to the same or different accounts, with the critical condition that CIDR blocks should not overlap."
+        }
+      ]
+    },
+    {
+      "uuid": "3b97c358-f6f6-4615-90cc-81ee9b5a4f09",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the maximum number of buckets that can be created in AWS by default?",
+          "options": {
+            "option_1": "50 buckets",
+            "option_2": "75 buckets",
+            "option_3": "100 buckets",
+            "option_4": "200 buckets"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "By default, AWS allows creation of 100 buckets in an AWS account. To create additional buckets, you need to request permission from Amazon."
+        }
+      ]
+    },
+    {
+      "uuid": "7af3fb26-2905-4f3b-a628-1e1f5335ca40",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the Difference between the Service Role and SAML Federated Role?",
+          "options": {
+            "option_1": "Service Roles are for AWS Services automation",
+            "option_2": "Federated Roles are for User Access from corporate directory",
+            "option_3": "Service Roles have no policy restrictions",
+            "option_4": "Federated Roles can only be used by root users"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Federated Roles are meant for User Access and getting access to AWS as per designed role, typically created for office employees and integrated with Active Directory groups."
+        }
+      ]
+    },
+    {
+      "uuid": "8d6ec422-afbb-48f1-bfca-38396ae60d2e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How many Policies can be attached to a role?",
+          "options": {
+            "option_1": "5",
+            "option_2": "15",
+            "option_3": "10",
+            "option_4": "20"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "10 is the soft limit for policies that can be attached to a role, with a maximum possible limit of 20."
+        }
+      ]
+    },
+    {
+      "uuid": "9f6581a0-5aac-48c9-a0a4-9843364b74d4",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the different ways to access AWS?",
+          "options": {
+            "option_1": "Console only",
+            "option_2": "CLI and Console",
+            "option_3": "SDK only",
+            "option_4": "CLI, Console, and SDK"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "There are 3 different ways to access AWS: Command Line Interface (CLI), Management Console, and Software Development Kit (SDK)."
+        }
+      ]
+    },
+    {
+      "uuid": "f2cfb7e8-9af9-4b42-b882-b5d605951541",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How is a Root AWS user different from an IAM User?",
+          "options": {
+            "option_1": "Root user has limited access",
+            "option_2": "IAM User has full AWS environment access",
+            "option_3": "Root User has access to entire AWS environment with no policy restrictions",
+            "option_4": "IAM Users cannot be customized"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Root User will have access to entire AWS environment and it will not have any policy attached to it, while IAM Users have permissions based on attached policies."
+        }
+      ]
+    },
+    {
+      "uuid": "91e11134-edca-460d-945f-04264c3c4114",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does the Principal of Least Privilege mean in IAM?",
+          "options": {
+            "option_1": "Providing maximum permissions",
+            "option_2": "Providing no permissions",
+            "option_3": "Providing the same or equivalent permission to the user/role",
+            "option_4": "Providing random permissions"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Principal of least privilege means to provide only the necessary or equivalent permissions required for a user/role to perform their specific tasks."
+        }
+      ]
+    },
+    {
+      "uuid": "24266cd4-51a2-4007-ad76-60ddf11d1cf0",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is simple workflow service one of the valid Simple Notification Service subscribers?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Simple Workflow Service is not a valid subscriber to Simple Notification Service. These are separate AWS services with different purposes."
+        }
+      ]
+    },
+    {
+      "uuid": "21982d62-4156-425e-b902-d534873012cb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which cloud model do Developers and organizations all around the world leverage extensively?",
+          "options": {
+            "option_1": "SAAS",
+            "option_2": "PAAS",
+            "option_3": "IAAS-Infrastructure as a service",
+            "option_4": "CAAS"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "IAAS (Infrastructure as a Service) is the cloud model most widely used by developers and organizations, providing scalable and flexible cloud computing infrastructure."
+        }
+      ]
+    },
+    {
+      "uuid": "537635c9-52fa-4d21-9932-2e35e7d44d20",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Can cloud front serve content from a non AWS origin server?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "CloudFront is primarily designed to serve content from AWS origins, and does not support serving content directly from non-AWS origin servers."
+        }
+      ]
+    },
+    {
+      "uuid": "b2bd5411-cb31-48a9-a15f-40bb57ff9636",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is EFS a centralised storage service in AWS?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "EFS (Elastic File System) is a centralized, scalable, and fully managed file storage service in AWS that can be used across multiple AWS services and instances."
+        }
+      ]
+    },
+    {
+      "uuid": "f33b6d50-4fdb-46aa-9c38-5e35e9ffb98a",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which AWS service will you use to collect and process ecommerce data for near real time analysis?",
+          "options": {
+            "option_1": "DynamoDB",
+            "option_2": "Redshift",
+            "option_3": "Both Dynamo DB & Redshift",
+            "option_4": "Neither"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Both DynamoDB and Redshift can be used for collecting and processing ecommerce data. DynamoDB provides real-time data processing, while Redshift offers powerful analytics capabilities."
+        }
+      ]
+    },
+    {
+      "uuid": "6629201c-4695-4baa-93e7-2ef84ec02ebb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "An high demand of IOPS performance is expected around 15000. Which EBS volume type would you recommend?",
+          "options": {
+            "option_1": "General Purpose SSD",
+            "option_2": "Cold HDD",
+            "option_3": "Throughput Optimized HDD",
+            "option_4": "Provisioned IOPS"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "Provisioned IOPS EBS volumes are specifically designed for I/O-intensive workloads that require high and consistent performance, making them ideal for scenarios demanding around 15000 IOPS."
+        }
+      ]
+    }
+  ]
+}
