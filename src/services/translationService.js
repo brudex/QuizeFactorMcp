@@ -1451,20 +1451,14 @@ ${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
         
         if (questionText && Object.keys(options).length > 0 && correctAnswer) {
           questions.push({
-            questionType: "single-choice",
-            difficulty: "medium",
-            points: 1,
+            questionText: questionText,
+            options: options,
+            correctAnswer: Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer],
+            explanation: "Extracted using fallback method due to API quota limits.",
             metadata: {
               source: "regex_extraction",
               extractionMethod: "fallback"
-            },
-            translations: [{
-              languageCode: "en",
-              questionText: questionText,
-              options: options,
-              correctAnswer: Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer], // Convert to array as server expects array format
-              explanation: "Extracted using fallback method due to API quota limits."
-            }]
+            }
           });
         }
       } catch (error) {
@@ -1487,20 +1481,10 @@ ${textsToTranslate.map((text, i) => `[${i + 1}] ${text}`).join('\n\n')}`;
           throw new Error("No questions could be extracted using fallback method");
         }
         
-        // Add questions to the quiz 
-        const payload = {
-          quizUuid: this.quizUuid,
-          questions: questions,
-          metadata: {
-            source: "regex_extraction",
-            totalQuestions: questions.length,
-            textLength: text.length,
-            extractionMethod: "fallback"
-          }
-        };
-        
-        console.log(`Adding ${questions.length} questions extracted using fallback method`);
-        return await this.quizFactorApiService.addQuestionsToQuiz(payload); 
+        console.log(`Extracted ${questions.length} questions using fallback method`);
+        // Return the questions without adding them to quiz here
+        // The calling method will handle the addition
+        return questions;
       }
       throw error;
     }
@@ -1801,8 +1785,35 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
         );
       }
 
+      // Check quiz state before adding questions
+      let initialQuestionCount = 0;
+      try {
+        const initialQuizInfo = await this.getQuizInfo(quizUuid);
+        initialQuestionCount = initialQuizInfo.questionCount;
+        console.log(`📊 Quiz ${quizUuid} currently has ${initialQuestionCount} questions`);
+      } catch (error) {
+        console.warn("Could not get initial quiz state:", error.message);
+      }
+
       // Add questions to the quiz without translation
+      console.log(`📤 About to add ${questions.length} questions to quiz ${quizUuid}`);
       const result = await this.addQuestionsToQuiz(quizUuid, questions);
+
+      // Verify final state
+      try {
+        const finalQuizInfo = await this.getQuizInfo(quizUuid);
+        const finalQuestionCount = finalQuizInfo.questionCount;
+        const expectedCount = initialQuestionCount + questions.length;
+        console.log(`📊 Quiz ${quizUuid} now has ${finalQuestionCount} questions (expected: ${expectedCount})`);
+        
+        if (finalQuestionCount !== expectedCount) {
+          console.warn(`⚠️  Question count mismatch! Expected ${expectedCount}, got ${finalQuestionCount}`);
+        } else {
+          console.log(`✅ Question count verified: ${finalQuestionCount} questions`);
+        }
+      } catch (error) {
+        console.warn("Could not verify final quiz state:", error.message);
+      }
 
       return {
         quizUuid: result.quizUuid,
@@ -1924,7 +1935,7 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
           console.log('📦 Payload size:', `${(JSON.stringify(batchPayload).length / 1024).toFixed(1)}KB`);
           
           // Log first question in detail
-          if (batchPayload.questions.length > 0) {
+          if (batchPayload.questions.length > 0) { 
             console.log('\n🔍 FIRST QUESTION SAMPLE:');
             const firstQ = batchPayload.questions[0];
             console.log('- UUID:', firstQ.uuid);
@@ -1984,14 +1995,10 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
           
           // Log full payload (truncated for readability)
           console.log('\n📄 FULL PAYLOAD (first 2000 characters):');
-          const fullPayload = JSON.stringify(batchPayload, null, 2);
-          console.log('fullPayload', fullPayload);
+      
 
           // create a json file with the full payload
-          fs.writeFileSync('fullPayload.json', fullPayload);
-          console.log('fullPayload.json created');
-          
-          console.log('===== END PAYLOAD LOGGING =====\n');
+       
           
           const updateResponse = await this.client.post("/api/ai/add-quiz-questions", batchPayload);
           console.log(`✅ API call completed for batch ${i + 1}/${questionBatches.length}`);
@@ -2008,7 +2015,9 @@ Return ONLY a valid JSON array of question objects, with no additional text.`;
             throw new Error(`Failed to add quiz questions${questionBatches.length > 1 ? ` batch ${i + 1}` : ''}: ${updateResponse.data?.message || 'Unknown error'}`);
           }
 
-          console.log('updateResponse>>>>>', updateResponse);
+          console.log('updateResponse.data', JSON.stringify(updateResponse.data, null, 2));
+
+         
 
           batchResponses.push(updateResponse.data);
           

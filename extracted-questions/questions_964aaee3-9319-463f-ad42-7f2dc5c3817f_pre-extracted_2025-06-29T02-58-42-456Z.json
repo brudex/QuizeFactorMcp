@@ -1,0 +1,2549 @@
+{
+  "metadata": {
+    "quizUuid": "964aaee3-9319-463f-ad42-7f2dc5c3817f",
+    "status": "pre-extracted",
+    "timestamp": "2025-06-29T02:58:42.456Z",
+    "totalQuestions": 115,
+    "extractionSource": "translationService",
+    "nodeVersion": "v23.11.0",
+    "platform": "darwin",
+    "languages": [
+      "en"
+    ],
+    "questionTypes": [
+      "single-choice"
+    ],
+    "sampleQuestion": {
+      "uuid": "fed0abc6-2ca9-433d-832f-834cbfeb3682",
+      "questionType": "single-choice",
+      "translationCount": 1,
+      "firstTranslation": "What is AWS?..."
+    }
+  },
+  "questions": [
+    {
+      "uuid": "fed0abc6-2ca9-433d-832f-834cbfeb3682",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is AWS?",
+          "options": {
+            "option_1": "A social media platform",
+            "option_2": "A cloud computing platform providing on-demand resources",
+            "option_3": "A hardware manufacturing company",
+            "option_4": "A software development tool"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "AWS (Amazon Web Services) is a comprehensive cloud computing platform that provides on-demand resources for hosting web services, storage, networking, databases, and other resources over the internet with a pay-as-you-go pricing model."
+        }
+      ]
+    },
+    {
+      "uuid": "c71b033c-c5d7-4406-880d-a7ec7798a2a0",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the pricing models for EC2 instances?",
+          "options": {
+            "option_1": "Fixed, Variable, Flexible",
+            "option_2": "Monthly, Yearly, Quarterly",
+            "option_3": "On-demand, Reserved, Spot, Scheduled, Dedicated",
+            "option_4": "Basic, Premium, Enterprise"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AWS EC2 instances have five pricing models: On-demand (pay by the hour), Reserved (1-3 year commitment), Spot (bid on unused capacity), Scheduled (recurring instances), and Dedicated (single-tenant hardware)."
+        }
+      ]
+    },
+    {
+      "uuid": "42754071-fc6f-4a44-9caf-000fadd64a3f",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is an AMI?",
+          "options": {
+            "option_1": "Amazon Managed Infrastructure",
+            "option_2": "Automated Machine Interface",
+            "option_3": "Amazon Machine Image",
+            "option_4": "Advanced Monitoring Instrument"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AMI stands for Amazon Machine Image. It is a template that contains software configurations, launch permissions, and a block device mapping that specifies the volumes to attach to an instance when it is launched."
+        }
+      ]
+    },
+    {
+      "uuid": "ce62c59b-3cab-4c8b-a4bf-b2a7124c92d1",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is an EIP?",
+          "options": {
+            "option_1": "Enterprise Internet Protocol",
+            "option_2": "Elastic Internet Provider",
+            "option_3": "External IP Address",
+            "option_4": "Elastic IP Address"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "EIP stands for Elastic IP address. It is designed for dynamic cloud computing and allows you to have a static IP address for your instances that remains consistent even when you stop and restart your instances."
+        }
+      ]
+    },
+    {
+      "uuid": "becf4673-238c-4522-ac2b-9b9f9f7c4068",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the types of volumes in EBS?",
+          "options": {
+            "option_1": "Hard, Soft, Virtual",
+            "option_2": "General purpose, Provisioned IOPS, Magnetic, Cold HDD, Throughput optimized",
+            "option_3": "Primary, Secondary, Tertiary",
+            "option_4": "Local, Network, Cloud"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "EBS (Elastic Block Store) volumes include General purpose, Provisioned IOPS, Magnetic, Cold HDD, and Throughput optimized volumes, each designed for different performance and cost requirements."
+        }
+      ]
+    },
+    {
+      "uuid": "7fa640c9-57c5-4b3b-84d9-932c7747509a",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the different storage classes in S3?",
+          "options": {
+            "option_1": "Standard frequently accessed",
+            "option_2": "Standard infrequently accessed",
+            "option_3": "One-zone infrequently accessed",
+            "option_4": "Glacier and RRS – reduced redundancy storage"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "S3 offers multiple storage classes including Standard frequently accessed, Standard infrequently accessed, One-zone infrequently accessed, Glacier, and Reduced Redundancy Storage (RRS), each designed for different use cases and cost optimization."
+        }
+      ]
+    },
+    {
+      "uuid": "6d407919-75cf-46c1-810d-24735c35a474",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the default storage class in S3?",
+          "options": {
+            "option_1": "Glacier",
+            "option_2": "Standard infrequently accessed",
+            "option_3": "Standard frequently accessed",
+            "option_4": "One-zone infrequently accessed"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Standard frequently accessed is the default storage class in S3, designed for frequently accessed data with high performance and durability."
+        }
+      ]
+    },
+    {
+      "uuid": "eb1210d5-756c-4a22-ab3f-0645c998da69",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can you secure the access to your S3 bucket?",
+          "options": {
+            "option_1": "Password protection",
+            "option_2": "IP whitelisting",
+            "option_3": "ACL – Access Control List",
+            "option_4": "Bucket policies"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "You can control access to S3 buckets using two primary methods: Access Control Lists (ACL) and Bucket policies, which define who can access the bucket and what actions they can perform."
+        }
+      ]
+    },
+    {
+      "uuid": "2d39731c-912e-4d9c-bb04-6d8cf2732fe2",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can you encrypt data in S3?",
+          "options": {
+            "option_1": "Client-side encryption only",
+            "option_2": "Server Side Encryption – S3 (AES 256 encryption)",
+            "option_3": "Server Side Encryption – KMS (Key management Service)",
+            "option_4": "All of the above"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "S3 offers multiple encryption methods: Server Side Encryption with S3 (AES 256), Server Side Encryption with KMS, and Client Side Encryption, providing comprehensive data protection options."
+        }
+      ]
+    },
+    {
+      "uuid": "b7d6dded-77ea-4bc9-afbd-1025fa287c15",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the parameters for S3 pricing?",
+          "options": {
+            "option_1": "Storage used only",
+            "option_2": "Number of requests only",
+            "option_3": "Storage management and data transfer",
+            "option_4": "Storage used, number of requests, storage management, data transfer, and transfer acceleration"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "S3 pricing is based on multiple parameters including storage used, number of requests, storage management, data transfer, and transfer acceleration, providing a comprehensive pricing model."
+        }
+      ]
+    },
+    {
+      "uuid": "1fc8faea-2b39-48ca-b71b-ad0e9c30fdfe",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is a snowball?",
+          "options": {
+            "option_1": "A cloud storage device",
+            "option_2": "A data transport solution for transferring large amounts of data into and out of AWS",
+            "option_3": "A type of network security tool",
+            "option_4": "A database backup method"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Snowball is an AWS data transport solution that allows users to move huge amounts of data from one place to another, reducing network costs, transfer times, and providing better security."
+        }
+      ]
+    },
+    {
+      "uuid": "64dcc8eb-b20d-4001-8c07-b9fe29015900",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the database types in RDS?",
+          "options": {
+            "option_1": "Oracle, MySQL, PostgreSQL",
+            "option_2": "Aurora, Oracle, MySQL, PostgreSQL, MariaDB, SQL Server",
+            "option_3": "MySQL, PostgreSQL, MongoDB",
+            "option_4": "Oracle, SQL Server, NoSQL"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon RDS supports six database types: Aurora, Oracle, MySQL Server, PostgreSQL, MariaDB, and SQL Server."
+        }
+      ]
+    },
+    {
+      "uuid": "1429b044-0614-4210-a25c-1eade81e672f",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the maximum size of messages in SQS?",
+          "options": {
+            "option_1": "128 KB",
+            "option_2": "512 KB",
+            "option_3": "256 KB",
+            "option_4": "1 MB"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "The maximum size of messages in Amazon Simple Queue Service (SQS) is 256 KB."
+        }
+      ]
+    },
+    {
+      "uuid": "b0044ebd-8811-49b9-a813-a16690eabce4",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the types of queues in SQS?",
+          "options": {
+            "option_1": "Standard queue and Priority queue",
+            "option_2": "Standard queue and LIFO queue",
+            "option_3": "Standard queue and FIFO queue",
+            "option_4": "Batch queue and Standard queue"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "There are two types of queues in Amazon SQS: Standard queue and FIFO (First In First Out) queue."
+        }
+      ]
+    },
+    {
+      "uuid": "fca11d36-6624-416d-814f-2c0385abf889",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the types of load balancers in EC2?",
+          "options": {
+            "option_1": "Internal, External, and Hybrid load balancers",
+            "option_2": "Public, Private, and Shared load balancers",
+            "option_3": "Application load balancer, Network load balancer, and Classic load balancer",
+            "option_4": "HTTP, HTTPS, and TCP load balancers"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Amazon EC2 supports three types of load balancers: Application load balancer, Network load balancer, and Classic load balancer."
+        }
+      ]
+    },
+    {
+      "uuid": "8eb3a4cf-a3c5-4b56-a776-a114e54dc0bb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the difference between the classic load balancer and application load balancer?",
+          "options": {
+            "option_1": "Dynamic port mapping with multiple port multiple listeners",
+            "option_2": "One port one listener",
+            "option_3": "No port mapping",
+            "option_4": "Fixed port configuration"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Application Load Balancer supports dynamic port mapping and multiple port multiple listeners, while Classic Load Balancer uses one port one listener approach"
+        }
+      ]
+    },
+    {
+      "uuid": "5d2fd79f-4f9e-4a93-b325-e15898961908",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "By default how many IP addresses does AWS reserve in a subnet?",
+          "options": {
+            "option_1": "3",
+            "option_2": "4",
+            "option_3": "5",
+            "option_4": "6"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AWS reserves 5 IP addresses in each subnet for internal networking purposes"
+        }
+      ]
+    },
+    {
+      "uuid": "a6bf1404-bbd4-41ee-94a4-71cf9e40fe11",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is it possible to reduce an EBS volume?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No",
+            "option_3": "Only for certain volume types",
+            "option_4": "Depends on region"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "It is not possible to reduce EBS volume size, you can only increase the volume"
+        }
+      ]
+    },
+    {
+      "uuid": "a62f86ea-1539-4d8a-bb16-cf8d952d47ea",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "By default how many Elastic IP addresses does AWS offer?",
+          "options": {
+            "option_1": "3",
+            "option_2": "4",
+            "option_3": "5",
+            "option_4": "6"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AWS offers 5 elastic IP addresses per region by default"
+        }
+      ]
+    },
+    {
+      "uuid": "a76e7127-c773-45b7-8f80-4b947e395fc0",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the use of tags in AWS?",
+          "options": {
+            "option_1": "Billing purposes",
+            "option_2": "Security configuration",
+            "option_3": "Identification and grouping of AWS resources",
+            "option_4": "Performance monitoring"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Tags are used for identification and grouping of AWS resources"
+        }
+      ]
+    },
+    {
+      "uuid": "8c9812d4-d676-4757-88f4-30cb4f350883",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "You have an EC2 instance that has an unencrypted volume. You want to create another Encrypted volume from this unencrypted volume. Which of the following steps can achieve this?",
+          "options": {
+            "option_1": "Create a snapshot of the unencrypted volume (applying encryption parameters)",
+            "option_2": "Directly convert the volume to encrypted",
+            "option_3": "Delete and recreate the volume",
+            "option_4": "Use AWS encryption wizard"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "To create an encrypted volume from an unencrypted volume, you need to create a snapshot of the unencrypted volume, apply encryption parameters, copy the snapshot, and then create a new volume from the copied snapshot."
+        }
+      ]
+    },
+    {
+      "uuid": "ff1f02a9-5617-4c00-985e-f1e0f52052f7",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Where does the user specify the maximum number of instances with the auto scaling commands?",
+          "options": {
+            "option_1": "Auto scaling Launch Config",
+            "option_2": "EC2 Console",
+            "option_3": "AWS Management Console",
+            "option_4": "CloudFormation template"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "The maximum number of instances in an auto scaling group is specified in the Auto Scaling Launch Configuration."
+        }
+      ]
+    },
+    {
+      "uuid": "c868529a-5094-4ba0-be64-f27d94da07ca",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which are the types of AMI provided by AWS?",
+          "options": {
+            "option_1": "Instance Store backed, EBS Backed",
+            "option_2": "Cloud Backed, Local Backed",
+            "option_3": "Standard Backed, Premium Backed",
+            "option_4": "Public Backed, Private Backed"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "AWS provides two types of Amazon Machine Images (AMIs): Instance Store backed and EBS Backed."
+        }
+      ]
+    },
+    {
+      "uuid": "c843487a-b56d-4a59-9317-7b47e48a45cc",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "After configuring ELB, you need to ensure that the user requests are always attached to a single instance. What setting can you use?",
+          "options": {
+            "option_1": "Sticky session",
+            "option_2": "Persistent connection",
+            "option_3": "Fixed routing",
+            "option_4": "Instance pinning"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Sticky sessions ensure that a user's requests are consistently routed to the same instance throughout their session."
+        }
+      ]
+    },
+    {
+      "uuid": "cb80a7c0-c049-49ee-b20e-7a2428569636",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "When do I prefer Provisioned IOPS over the Standard RDS storage?",
+          "options": {
+            "option_1": "For batch-oriented workloads",
+            "option_2": "For high-performance database applications",
+            "option_3": "For small, infrequent read/write operations",
+            "option_4": "For archival storage"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Provisioned IOPS is preferred for high-performance database applications that require consistent and predictable I/O performance, not for batch-oriented workloads as suggested in the original text."
+        }
+      ]
+    },
+    {
+      "uuid": "131acf3c-dd94-4fe3-88b2-262343c1de44",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How will you change the instance type for instances running in your applications tier using Auto Scaling?",
+          "options": {
+            "option_1": "Change in EC2 dashboard",
+            "option_2": "Change in Auto Scaling launch configuration",
+            "option_3": "Change in instance settings",
+            "option_4": "Change in AWS Management Console"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "The instance type can be changed by modifying the Auto Scaling launch configuration, which defines the configuration for new instances launched by the Auto Scaling group."
+        }
+      ]
+    },
+    {
+      "uuid": "51edc589-caa3-48bc-8adc-56efa155a187",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does Connection Draining do?",
+          "options": {
+            "option_1": "Stops new connections to instances",
+            "option_2": "Terminates failed instances",
+            "option_3": "Re-routes traffic from instances to be updated or failed health checks",
+            "option_4": "Creates new instances"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Connection Draining re-routes traffic from instances that are being updated or have failed health checks, ensuring smooth traffic management during instance changes."
+        }
+      ]
+    },
+    {
+      "uuid": "a445ffd5-06c9-4893-8420-87ec60bbc77c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "When an instance is unhealthy, which service terminates and replaces it?",
+          "options": {
+            "option_1": "EC2 Service",
+            "option_2": "Auto Scaling",
+            "option_3": "Elastic Load Balancer",
+            "option_4": "CloudWatch"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Auto Scaling provides fault tolerance by automatically terminating unhealthy instances and replacing them with new ones to maintain the desired capacity."
+        }
+      ]
+    },
+    {
+      "uuid": "ded3e309-086e-4aa8-a65b-163ca08ba9fb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are Life Cycle Hooks used for in Auto Scaling?",
+          "options": {
+            "option_1": "To monitor instance health",
+            "option_2": "To create new instances",
+            "option_3": "To add additional wait time to scale in or scale out events",
+            "option_4": "To terminate instances"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Life Cycle Hooks are used to put additional wait time on scale in or scale out events, allowing for custom actions or processing during instance launch or termination."
+        }
+      ]
+    },
+    {
+      "uuid": "e662a85d-f701-47d6-85c7-9535c2f6d530",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What happens to Auto Scaling if it fails to launch a single instance for more than 24 hours?",
+          "options": {
+            "option_1": "It continues trying to launch instances",
+            "option_2": "It automatically terminates",
+            "option_3": "The Auto Scaling process is suspended",
+            "option_4": "It sends an alert"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "If Auto Scaling fails to launch a single instance for more than 24 hours, the scaling process will be suspended to prevent continuous failed launch attempts."
+        }
+      ]
+    },
+    {
+      "uuid": "bb1c84a0-ffb3-4c8f-b089-d7751f8fef59",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can an application use AWS credentials to securely access an S3 bucket?",
+          "options": {
+            "option_1": "Create an IAM role for the EC2 that allows list access to objects in S3 buckets",
+            "option_2": "Use hardcoded AWS access keys in the application",
+            "option_3": "Share root account credentials with the application",
+            "option_4": "Manually input credentials each time"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Creating an IAM role for the EC2 instance and launching the instance with this role allows secure access to S3 by retrieving credentials from the EC2 instance metadata, which is the most secure and recommended approach."
+        }
+      ]
+    },
+    {
+      "uuid": "a11051ba-05d9-4b85-9ebb-bfff83f1cd0c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can you create a CloudWatch alarm to notify on-call engineers about 500 Internal Server Errors?",
+          "options": {
+            "option_1": "Manually email engineers when errors occur",
+            "option_2": "Create a CloudWatch Logs group with metric filters to capture 500 Internal Server Errors",
+            "option_3": "Ignore the errors and hope they resolve themselves",
+            "option_4": "Restart the servers manually"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Create a CloudWatch Logs group, define metric filters to capture 500 Internal Server Errors, set a CloudWatch alarm on the metric, and use Amazon Simple Notification Service (SNS) to notify on-call engineers when the alarm is triggered."
+        }
+      ]
+    },
+    {
+      "uuid": "b94cee0f-d900-4456-81e3-f42565cf500c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the most cost-effective and performance-efficient architecture for a multi-platform web application?",
+          "options": {
+            "option_1": "Use a single ELB for all platforms",
+            "option_2": "Create separate servers for each platform",
+            "option_3": "Assign multiple ELBs to EC2 instances, with one ELB for each platform type",
+            "option_4": "Use a cloud-agnostic load balancer"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Assigning multiple ELBs to EC2 instances, with one ELB for each platform type, allows for platform-specific sticky sessions and SSL termination, providing a cost-effective and performance-efficient solution."
+        }
+      ]
+    },
+    {
+      "uuid": "4fcc9890-4964-4292-a9f8-54adb1d5fb41",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can you implement high availability for a legacy client-server application during AWS migration?",
+          "options": {
+            "option_1": "Manually configure server connections",
+            "option_2": "Use a single server setup",
+            "option_3": "File a change request to implement Proxy Protocol support",
+            "option_4": "Ignore network configuration"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "File a change request to implement Proxy Protocol support in the application. Use an ELB with TCP Listener and Proxy Protocol enabled to distribute load across application servers in different Availability Zones, maximizing scalability and high availability."
+        }
+      ]
+    },
+    {
+      "uuid": "e58ba378-aaf0-40a0-8987-73e62bf0f381",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How should you prepare for a 20x traffic increase over 4 weeks?",
+          "options": {
+            "option_1": "Do nothing and hope for the best",
+            "option_2": "Manually scale servers",
+            "option_3": "Check service limits in Trusted Advisors and adjust as necessary",
+            "option_4": "Reduce expected traffic"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Check service limits in Trusted Advisors and adjust as necessary to ensure the forecasted EC2 instance count remains within the allowed limits, preventing potential service disruptions during the traffic ramp-up."
+        }
+      ]
+    },
+    {
+      "uuid": "134b996c-781a-4a31-a4fb-3f62c59059e3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "You have a web application running on six Amazon EC2 instances, consuming about 45% of resources on each instance. You want high availability and even load distribution. Which architectural choices should you make?",
+          "options": {
+            "option_1": "Deploy all 6 instances in a single availability zone",
+            "option_2": "Deploy 3 EC2 instances in one availability zone and 3 in another availability zone and use Amazon Elastic Load Balancer",
+            "option_3": "Use a single load balancer without distributing across availability zones",
+            "option_4": "Deploy instances randomly across different regions"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Deploying instances across two availability zones provides high availability and fault tolerance. Using an Elastic Load Balancer ensures even distribution of traffic across instances, improving application reliability and performance."
+        }
+      ]
+    },
+    {
+      "uuid": "28276c6a-dc31-499c-9274-0a0e47997f26",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "You are designing an application containing protected health information. What security measures should be implemented to meet compliance requirements for encryption at rest and in transit?",
+          "options": {
+            "option_1": "Use no encryption",
+            "option_2": "Use only network-level encryption",
+            "option_3": "Use TCP load balancing, SSL termination on EC2 instances, OS-level disk encryption on EBS volumes, and S3 server-side encryption",
+            "option_4": "Use basic security groups only"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "To protect sensitive health information, you need comprehensive encryption: SSL termination on load balancers and EC2 instances, disk encryption for EBS volumes, and server-side encryption for S3 storage to ensure data is protected both in transit and at rest."
+        }
+      ]
+    },
+    {
+      "uuid": "d73645b9-6970-410f-a7a4-2b8aaf694a8e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "During load testing of a web application in a VPC, the logs show uneven distribution of HTTP requests across web servers. What recommendation can help ensure even load distribution?",
+          "options": {
+            "option_1": "Add more servers to the Auto Scaling group",
+            "option_2": "Reconfigure the load balancer settings",
+            "option_3": "Reconfigure load-testing software to re-resolve DNS for each web request",
+            "option_4": "Change the subnet configuration"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Re-resolving DNS for each web request helps ensure that the load-testing traffic is evenly distributed across all available web servers, preventing concentration of requests on a subset of instances."
+        }
+      ]
+    },
+    {
+      "uuid": "7ad964e4-2b6a-416d-90ae-2e4dde2a2963",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "A company has 10 m1.large Reserved Instances and recently added two c3.2xlarge instances to handle increased traffic. How can they most cost-effectively use their EC2 capacity?",
+          "options": {
+            "option_1": "Continue using a single Elastic Load Balancer",
+            "option_2": "Remove the c3.2xlarge instances",
+            "option_3": "Use a separate ELB for each instance type and distribute load with Route 53 weighted round-robin",
+            "option_4": "Manually distribute traffic between instance types"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Using separate ELBs for different instance types and distributing load with Route 53 weighted round-robin allows for more efficient use of different instance capacities and ensures optimal resource utilization."
+        }
+      ]
+    },
+    {
+      "uuid": "cb4fb402-918d-4f4c-9d15-678fe4324e36",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "An AWS customer is deploying a web application with a front-end on Amazon EC2 and confidential data on Amazon S3. What configuration will support the security requirements of centralized access management and preventing web application team from directly accessing sensitive data?",
+          "options": {
+            "option_1": "Configure web application to authenticate end-users against centralized access management system",
+            "option_2": "Use IAM roles to grant direct S3 access to EC2 instances",
+            "option_3": "Store credentials directly on EC2 instances",
+            "option_4": "Use public S3 bucket for sensitive data"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "The solution involves authenticating end-users through the centralized access management system and provisioning trusted STS tokens that allow approved users to download data directly from Amazon S3, ensuring controlled and secure access while preventing unauthorized access by the web application team."
+        }
+      ]
+    },
+    {
+      "uuid": "b912f2cc-a4a6-45d0-9dc7-fc6f3cbf8308",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Cloud Computing?",
+          "options": {
+            "option_1": "A physical server infrastructure",
+            "option_2": "A method of accessing programs, applications, storage, and servers over the internet",
+            "option_3": "A local software installation process",
+            "option_4": "A hardware maintenance technique"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Cloud computing provides services to access programs, applications, storage, network, and servers over the internet through browsers or client-side applications, without requiring users to install, update, or maintain the software locally."
+        }
+      ]
+    },
+    {
+      "uuid": "0722d89b-84f5-4b8c-8445-065ebea8eadb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the deployment models used in Cloud Computing?",
+          "options": {
+            "option_1": "Local, Remote, Hybrid, and Global",
+            "option_2": "Private, Public, Hybrid, and Community Cloud",
+            "option_3": "Internal, External, Mixed, and Shared Cloud",
+            "option_4": "Enterprise, Personal, Government, and Commercial Cloud"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "The four primary cloud deployment models are Private Cloud, Public Cloud, Hybrid Cloud, and Community Cloud, each offering different levels of access, control, and shared infrastructure."
+        }
+      ]
+    },
+    {
+      "uuid": "216e03a3-fa01-4487-9066-d8ed0c656dc6",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Infrastructure as a Service (IaaS)?",
+          "options": {
+            "option_1": "A software distribution model",
+            "option_2": "A platform for developers to build applications",
+            "option_3": "Virtualized computing resources over the internet",
+            "option_4": "A content delivery network"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Infrastructure as a Service (IaaS) provides virtualized computing resources over the internet, including CPU, memory, switches, routers, firewall, DNS, and load balancers, with examples like Azure and AWS."
+        }
+      ]
+    },
+    {
+      "uuid": "8958e024-696b-4fec-b56f-52fa7ef0391d",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is mean by Region, Availability Zone and Edge Location?",
+          "options": {
+            "option_1": "Region is a collection of data centers in a defined geography",
+            "option_2": "Availability Zone is a single data center",
+            "option_3": "Edge Location is a CDN endpoint for content delivery",
+            "option_4": "All of the above"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "Region is an independent collection of AWS resources in a defined geography, Availability Zone is a data center designed as an independent failure zone, and Edge Location is a CDN endpoint for delivering content with low latency."
+        }
+      ]
+    },
+    {
+      "uuid": "178cfdf5-71be-45c6-ae56-70e6ca03ed4c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How can you access the AWS Platform?",
+          "options": {
+            "option_1": "AWS Console only",
+            "option_2": "AWS CLI only",
+            "option_3": "AWS SDK only",
+            "option_4": "AWS Console, AWS CLI, and AWS SDK"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "AWS Platform can be accessed through three primary methods: AWS Console (web interface), AWS CLI (Command Line Interface), and AWS SDK (Software Development Kit)."
+        }
+      ]
+    },
+    {
+      "uuid": "51cc9fa1-7703-4610-b7c7-b3a5fc827772",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is EC2 and what are its benefits?",
+          "options": {
+            "option_1": "A physical server in AWS data center",
+            "option_2": "A web service providing resizable compute capacity in the cloud",
+            "option_3": "A storage service",
+            "option_4": "A networking service"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon Elastic Compute Cloud (EC2) is a web service that provides resizable compute capacity in the cloud. Its benefits include being easier and faster, elastic and scalable, offering high availability, and being cost-effective."
+        }
+      ]
+    },
+    {
+      "uuid": "e36f91c7-fb28-480f-93bd-563ad055df46",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the pricing models available in AWS EC2?",
+          "options": {
+            "option_1": "On-Demand Instances only",
+            "option_2": "Reserved Instances only",
+            "option_3": "Spot Instances only",
+            "option_4": "On-Demand, Reserved, Spot Instances, and Dedicated Host"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "AWS EC2 offers four pricing models: On-Demand Instances, Reserved Instances, Spot Instances, and Dedicated Host, each with different use cases and cost structures."
+        }
+      ]
+    },
+    {
+      "uuid": "40c7208d-f262-4ace-8de3-7a4988f85b32",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the types of EC2 instances?",
+          "options": {
+            "option_1": "General Purpose only",
+            "option_2": "Compute Optimized only",
+            "option_3": "Memory Optimized only",
+            "option_4": "General Purpose, Compute Optimized, Memory Optimized, Storage Optimized, and Accelerated Computing"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "AWS EC2 offers five instance types: General Purpose, Compute Optimized, Memory Optimized, Storage Optimized, and Accelerated Computing (GPU Based), each designed for specific workload requirements."
+        }
+      ]
+    },
+    {
+      "uuid": "f30b1ba9-d881-4919-bc95-ad6f731fb1ea",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is EBS?",
+          "options": {
+            "option_1": "A cloud computing service",
+            "option_2": "Persistent block level storage volumes for Amazon EC2 instances",
+            "option_3": "A networking protocol",
+            "option_4": "A database service"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon EBS provides persistent block level storage volumes for use with Amazon EC2 instances, automatically replicated within its availability zone to protect against component failure and offer high availability and durability."
+        }
+      ]
+    },
+    {
+      "uuid": "e5cc9ebe-4cb3-47c4-813c-e8a1cb1950bf",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which EBS volume type has the lowest performance characteristics?",
+          "options": {
+            "option_1": "Provisioned IOPS SSD",
+            "option_2": "General-Purpose SSD",
+            "option_3": "Magnetic Volume",
+            "option_4": "Throughput-optimized HDD"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Magnetic volumes have the lowest performance characteristics of all Amazon EBS volume types, with an average of 100 IOPS and maximum throughput of 40-90 MB."
+        }
+      ]
+    },
+    {
+      "uuid": "fca0d352-a9d6-47a1-a742-4d3ca35230a3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the purpose of Cold HDD volumes?",
+          "options": {
+            "option_1": "High-performance database workloads",
+            "option_2": "Frequently accessed workloads",
+            "option_3": "Less frequently accessed workloads",
+            "option_4": "Big data processing"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Cold HDD volumes are designed for less frequently accessed workloads and are significantly less expensive than other HDD volumes."
+        }
+      ]
+    },
+    {
+      "uuid": "b7020cbf-c819-405d-804a-ad8f9f72a76f",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are Amazon EBS-Optimized instances?",
+          "options": {
+            "option_1": "Free EC2 instances",
+            "option_2": "Instances with dedicated EBS capacity",
+            "option_3": "Instances with unlimited storage",
+            "option_4": "Instances with automatic backup"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon EBS-optimized instances ensure the EC2 instance is prepared to take advantage of EBS volume I/O, using an optimized configuration stack and providing additional dedicated capacity for Amazon EBS I/O."
+        }
+      ]
+    },
+    {
+      "uuid": "4b8749d3-1a0b-4771-8f43-653c3f21a614",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is an EBS Snapshot?",
+          "options": {
+            "option_1": "A full backup of an entire system",
+            "option_2": "A real-time data synchronization",
+            "option_3": "An incremental backup of an EBS volume",
+            "option_4": "A permanent data storage solution"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "EBS Snapshots are incremental backups that can back up data on an EBS Volume. The first snapshot may take some time to create and they are point-in-time copies of volumes."
+        }
+      ]
+    },
+    {
+      "uuid": "5f1142f9-33f6-48c1-8b49-2cfc90cf2d08",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Can an EBS volume be connected to multiple instances?",
+          "options": {
+            "option_1": "Yes, always",
+            "option_2": "No, never",
+            "option_3": "Only with special configuration",
+            "option_4": "Only for certain volume types"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "An EBS volume cannot be connected to multiple instances, though multiple EBS volumes can be connected to a single instance."
+        }
+      ]
+    },
+    {
+      "uuid": "c7ade472-c4df-4422-b68b-a847415acdf6",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the difference between Block storage and File storage?",
+          "options": {
+            "option_1": "Block storage is faster, File storage is slower",
+            "option_2": "Block storage operates at device level, File storage at operating system level",
+            "option_3": "Block storage is only for databases, File storage for documents",
+            "option_4": "They are exactly the same"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Block storage operates at a lower level (raw storage device level) and manages data as numbered, fixed-size blocks. File storage operates at a higher level (operating system level) and manages data as a named hierarchy of files and folders."
+        }
+      ]
+    },
+    {
+      "uuid": "b535df45-d1e9-40c3-bb82-733b7f690c49",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the advantages and disadvantages of EFS?",
+          "options": {
+            "option_1": "Fully managed service with automatic file system scaling",
+            "option_2": "Limited regional availability with complex provisioning",
+            "option_3": "High-performance storage with limited concurrent connections",
+            "option_4": "No multi-AZ replication capabilities"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "EFS offers multiple advantages including being a fully managed service that automatically grows and shrinks to petabytes, supports thousands of concurrent connections, provides multi-AZ replication, and automatically scales throughput for consistent low latency."
+        }
+      ]
+    },
+    {
+      "uuid": "114e4215-75ea-455a-8795-58a02351eb19",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the key things to remember while creating an S3 bucket?",
+          "options": {
+            "option_1": "Bucket names can be any length and contain any characters",
+            "option_2": "Bucket names must be unique across all AWS accounts",
+            "option_3": "You can create unlimited buckets per account",
+            "option_4": "Bucket names can include uppercase letters"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "S3 bucket names must be unique across all AWS accounts, can contain up to 63 lowercase letters, numbers, and hyphens, and you can create up to 100 buckets per account."
+        }
+      ]
+    },
+    {
+      "uuid": "9527c17b-83d5-4b43-b171-75a9d373cd68",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the storage classes available in Amazon S3?",
+          "options": {
+            "option_1": "Amazon S3 Standard and Amazon S3 Glacier",
+            "option_2": "Amazon S3 Standard, Standard-Infrequent Access, Reduced Redundancy Storage, and Glacier",
+            "option_3": "Only Amazon S3 Standard and Glacier",
+            "option_4": "Amazon S3 Standard and Reduced Redundancy Storage"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon S3 offers four storage classes: Amazon S3 Standard, Amazon S3 Standard-Infrequent Access, Amazon S3 Reduced Redundancy Storage, and Amazon Glacier."
+        }
+      ]
+    },
+    {
+      "uuid": "02d4f384-6245-45c2-9dc6-56c91950aa97",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is VPC Peering?",
+          "options": {
+            "option_1": "A networking connection between two Amazon VPCs that enables instances to communicate as if in the same network",
+            "option_2": "A method of connecting different cloud providers",
+            "option_3": "A way to create multiple virtual networks",
+            "option_4": "A security group configuration"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "VPC Peering is a networking connection between two Amazon VPCs that allows instances to communicate with each other as if they are within the same network, even across different AWS accounts within a single region."
+        }
+      ]
+    },
+    {
+      "uuid": "c73c1231-bb02-49cd-a1ae-e21c03b108c3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is MFA in AWS?",
+          "options": {
+            "option_1": "Multi-Factor Authentication that adds an extra layer of security",
+            "option_2": "A type of encryption method",
+            "option_3": "A network security protocol",
+            "option_4": "A user management system"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Multi-Factor Authentication (MFA) adds an extra layer of security to AWS infrastructure by requiring a second method of authentication beyond just password or access key."
+        }
+      ]
+    },
+    {
+      "uuid": "91719b81-2834-4830-b6ab-347e0773b185",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the Authentication methods in AWS?",
+          "options": {
+            "option_1": "User Name/Password, Access Key, Access Key/Session Token",
+            "option_2": "Biometric authentication, PIN, Security questions",
+            "option_3": "OAuth, SAML, OpenID",
+            "option_4": "Certificate-based authentication"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "AWS provides three primary authentication methods: User Name/Password, Access Key, and Access Key/Session Token for secure access to AWS resources."
+        }
+      ]
+    },
+    {
+      "uuid": "3ece1a82-64c5-44c8-9a56-1588d986971c",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is a Data Warehouse in AWS?",
+          "options": {
+            "option_1": "A central repository for data from multiple sources used for complex reporting",
+            "option_2": "A real-time transaction processing system",
+            "option_3": "A temporary storage solution",
+            "option_4": "A backup system"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "A data warehouse is a central repository for data from multiple sources, typically used for compiling reports and running complex queries, and is updated on a batch schedule unlike real-time transactional databases."
+        }
+      ]
+    },
+    {
+      "uuid": "6689d2f3-1487-4759-89e2-ec56fbb28e02",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does Multi-AZ mean in RDS?",
+          "options": {
+            "option_1": "Placing a secondary database copy in another availability zone for disaster recovery",
+            "option_2": "Creating multiple database instances in different regions",
+            "option_3": "Scaling database across multiple zones",
+            "option_4": "Distributing database load"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Multi-AZ in RDS allows you to create a secondary database instance in another availability zone, providing disaster recovery capabilities by maintaining a backup copy in a different zone."
+        }
+      ]
+    },
+    {
+      "uuid": "7e65e41e-d71e-4fe6-8f18-359612979499",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is SES in Amazon Web Services?",
+          "options": {
+            "option_1": "Simple Email Service for sending bulk mails",
+            "option_2": "Server Encryption System",
+            "option_3": "Storage Expansion Service",
+            "option_4": "Security Enhancement Service"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "SES (Simple Email Service) is an Amazon SMTP server designed to send bulk emails to customers quickly and cost-effectively, without allowing configuration of the mail server."
+        }
+      ]
+    },
+    {
+      "uuid": "736a3abc-1471-437d-8b42-836dc82e69c4",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the primary function of Amazon SQS?",
+          "options": {
+            "option_1": "Sending notifications",
+            "option_2": "Message queuing service",
+            "option_3": "Email delivery",
+            "option_4": "Data storage"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "SQS (Simple Queue Service) is a fast, reliable, and scalable message queuing service that acts as a temporary repository for messages waiting to be processed, creating a buffer between component producers and consumers."
+        }
+      ]
+    },
+    {
+      "uuid": "e4657740-9ab0-4f1c-a8d7-9912ef8cd25e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the main service layers of cloud computing?",
+          "options": {
+            "option_1": "Cloud, Network, and Storage",
+            "option_2": "Hardware, Software, and Platform",
+            "option_3": "SaaS, IaaS, and PaaS",
+            "option_4": "Compute, Storage, and Networking"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Cloud computing is primarily divided into three main service layers: Software-as-a-Service (SaaS), Infrastructure-as-a-Service (IaaS), and Platform-as-a-Service (PaaS)."
+        }
+      ]
+    },
+    {
+      "uuid": "38f9f32f-652d-443b-bff7-2cd2159e997d",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Lambda Edge in AWS?",
+          "options": {
+            "option_1": "A database service",
+            "option_2": "A content delivery network",
+            "option_3": "A function that modifies CloudFront content",
+            "option_4": "A security protocol"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Lambda Edge allows running Lambda functions to modify content delivered by CloudFront, executing the functions in AWS locations closer to the viewer without provisioning or managing servers."
+        }
+      ]
+    },
+    {
+      "uuid": "4c8ecef9-0a35-4621-abe2-df8d2afb95f8",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is IaaS in cloud computing?",
+          "options": {
+            "option_1": "Infrastructure as a Service",
+            "option_2": "Integrated Application Service",
+            "option_3": "Internet Access Service",
+            "option_4": "Internal Application System"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "IaaS (Infrastructure as a Service) is a cloud service that runs services on a 'pay-for-what-you-use' basis, with providers like Amazon Web Services, Microsoft Azure, and Google Compute Engine. Typically used by IT Administrators."
+        }
+      ]
+    },
+    {
+      "uuid": "0087fca8-64f7-4960-bd75-ac393c11b4d6",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which Automation Gears Can Help With Spinup Services?",
+          "options": {
+            "option_1": "API tools",
+            "option_2": "Personal scripts in Perl or bash",
+            "option_3": "Flowery management tools",
+            "option_4": "Scalar or Right scale"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "API tools can be used for spin up services and can also work with written scripts in various programming languages."
+        }
+      ]
+    },
+    {
+      "uuid": "ccdfa3b8-0b63-411d-9d5c-4e5ce3395d92",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is an AMI and how do you build one?",
+          "options": {
+            "option_1": "A machine image that defines programs and settings for an EC2 instance",
+            "option_2": "A backup of an existing server",
+            "option_3": "A network configuration template",
+            "option_4": "A storage snapshot"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "An Amazon Machine Image (AMI) explains the programs and settings that will be applied when you launch an EC2 instance, and can be created by configuring an instance and using the AWS Management Console to create a custom image."
+        }
+      ]
+    },
+    {
+      "uuid": "1da78d73-f815-46f0-b9f0-6437f410ec79",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the main features of Amazon CloudFront?",
+          "options": {
+            "option_1": "Speeds up delivery of web content",
+            "option_2": "Provides storage solutions",
+            "option_3": "Manages database services",
+            "option_4": "Handles network security"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Amazon CloudFront is a web service that speeds up delivery of static and dynamic web content through a network of data centers called edge locations."
+        }
+      ]
+    },
+    {
+      "uuid": "5abeb56a-f951-48da-b27a-6e6f0f6a1c4e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the features of Amazon EC2 service?",
+          "options": {
+            "option_1": "Provides resizable compute capacity in the cloud",
+            "option_2": "Offers unlimited storage",
+            "option_3": "Manages database services",
+            "option_4": "Handles network routing"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Amazon Elastic Compute Cloud (EC2) provides secure, resizable compute capacity in the cloud, designed to make web-scale cloud computing easier for developers."
+        }
+      ]
+    },
+    {
+      "uuid": "d2e16410-c13f-4672-8082-8015a32a21f9",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "When attached to an Amazon VPC, which two components provide connectivity with external networks?",
+          "options": {
+            "option_1": "Internet Gateway (IGW)",
+            "option_2": "Virtual Private Gateway (VGW)",
+            "option_3": "Network Address Translation (NAT)",
+            "option_4": "Elastic Load Balancer"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "The Internet Gateway (IGW) and Virtual Private Gateway (VGW) are the two components that provide connectivity with external networks when attached to an Amazon VPC."
+        }
+      ]
+    },
+    {
+      "uuid": "8e69007b-f60f-49b6-9228-ad04cb539f9b",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the best approach to anchor information for conveying in the cloud?",
+          "options": {
+            "option_1": "Backup Data Locally",
+            "option_2": "Avoid Storing Sensitive Information",
+            "option_3": "Use Cloud Services that Encrypt Data",
+            "option_4": "Install Anti-infection Software"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "Backing up data locally is crucial for ensuring data protection and recovery in cloud environments. It provides a safety net in case of data loss or corruption in the cloud."
+        }
+      ]
+    },
+    {
+      "uuid": "2c74509d-bae5-4fe9-93c2-6867ebb52685",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is AWS Certificate Manager?",
+          "options": {
+            "option_1": "A service for purchasing SSL certificates",
+            "option_2": "A tool for managing network security",
+            "option_3": "A service to provision, manage, and deploy SSL/TLS certificates",
+            "option_4": "A encryption key management system"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AWS Certificate Manager is a service that simplifies the process of provisioning, managing, and deploying SSL/TLS certificates for use with AWS services and internal connected resources, removing the manual process of obtaining and renewing certificates."
+        }
+      ]
+    },
+    {
+      "uuid": "ae217fe2-76a1-4ff9-befe-fe5995a9e9df",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the AWS Key Management Service?",
+          "options": {
+            "option_1": "A password management tool",
+            "option_2": "A service to create and control encryption keys",
+            "option_3": "A network security system",
+            "option_4": "A data backup service"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "AWS Key Management Service (AWS KMS) is a managed service that makes it easy to create and control the encryption keys used to encrypt data, and is integrated with AWS CloudTrail for key usage logging."
+        }
+      ]
+    },
+    {
+      "uuid": "5b177ffa-d1ad-4f97-a13c-47844ed45ea2",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Amazon EMR?",
+          "options": {
+            "option_1": "A cloud storage service",
+            "option_2": "A database management system",
+            "option_3": "A fully managed hosted Hadoop framework over Amazon EC2",
+            "option_4": "A network security tool"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Amazon Elastic MapReduce (EMR) is a fully managed hosted Hadoop framework that runs on Amazon Elastic Compute Cloud (EC2), providing a scalable and flexible big data processing solution."
+        }
+      ]
+    },
+    {
+      "uuid": "f5103936-5b33-4d91-9e63-de23afbf7eca",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Amazon Kinesis Firehose?",
+          "options": {
+            "option_1": "A data streaming platform",
+            "option_2": "A cloud storage service",
+            "option_3": "A network monitoring tool",
+            "option_4": "An easy way to load streaming data into data stores and analytics tools"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data stores and analytics tools, offering a fully managed service that automatically scales to match data throughput."
+        }
+      ]
+    },
+    {
+      "uuid": "5e9cd35a-ddb6-435e-86e0-31761a90a063",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is Amazon CloudSearch?",
+          "options": {
+            "option_1": "A cloud-based database service",
+            "option_2": "A network security tool",
+            "option_3": "A scalable cloud-based search service",
+            "option_4": "A data backup system"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Amazon CloudSearch is a scalable cloud-based search service that allows developers to easily integrate customized search capabilities into applications, with the ability to set up and deploy a search application in under an hour."
+        }
+      ]
+    },
+    {
+      "uuid": "99f36fc7-4183-4a43-b9a4-087f89161b36",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is it possible for an EC2 classic instance to become a member of a virtual private cloud?",
+          "options": {
+            "option_1": "Yes, always",
+            "option_2": "No, never",
+            "option_3": "Only with special configuration",
+            "option_4": "Depends on the AWS region"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "EC2 classic instances cannot be directly added to a VPC. Amazon VPC allows you to launch EC2 resources into specific subnets within a virtual private cloud, but this is not possible with classic instances."
+        }
+      ]
+    },
+    {
+      "uuid": "5e1ae57c-5d2d-41c1-8991-3e5525da3b77",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the work of an Amazon VPC router?",
+          "options": {
+            "option_1": "To manage network security",
+            "option_2": "To route traffic between subnets in a VPC",
+            "option_3": "To create new virtual networks",
+            "option_4": "To manage EC2 instances"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "A VPC router is responsible for routing traffic between different subnets within a Virtual Private Cloud, enabling communication between AWS resources launched in different subnets of the same VPC."
+        }
+      ]
+    },
+    {
+      "uuid": "c8028317-8dc0-423d-849d-be49dda936bc",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How would one be able to associate a VPC to corporate server farm?",
+          "options": {
+            "option_1": "Using VPN",
+            "option_2": "AWS Direct Connect",
+            "option_3": "Internet Gateway",
+            "option_4": "NAT Gateway"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "AWS Direct Connect provides a dedicated, low-latency fiber-optic connection between AWS and on-premises infrastructure, allowing safe and direct association of VPC to corporate server farm over 1 or 10 gigabit Ethernet connections."
+        }
+      ]
+    },
+    {
+      "uuid": "be2946ae-3ec5-439a-a7ac-d64526607fbc",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is it conceivable to push off S3 with EC2 examples?",
+          "options": {
+            "option_1": "No, never possible",
+            "option_2": "Only with special permissions",
+            "option_3": "Yes, with root approaches upheld by local event stockpiling",
+            "option_4": "Only for specific EC2 types"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Yes, it is possible to push off S3 with EC2 instances that have root approaches supported by local event storage. Developers can use Amazon S3 to load Amazon Machine Images (AMIs) and transfer data between S3 and EC2."
+        }
+      ]
+    },
+    {
+      "uuid": "f59ea196-5494-4d36-a5b9-eaac2622dd2d",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the distinction between Amazon S3 and EBS?",
+          "options": {
+            "option_1": "They are exactly the same storage service",
+            "option_2": "S3 is for mounting directly onto EC2, EBS is object storage",
+            "option_3": "EBS is Object Oriented Storage, S3 is for mounting on EC2",
+            "option_4": "EBS is for mounting directly onto EC2, S3 is Object Oriented Storage"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "EBS is designed for mounting directly onto EC2 server instances, while S3 is Object Oriented Storage that is not constantly accessed and is therefore cheaper. EBS comes in HDD and SSD variants with different performance and pricing characteristics."
+        }
+      ]
+    },
+    {
+      "uuid": "d838954b-2c10-4e5f-87ec-c8fe85161075",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What do you comprehend by AWS?",
+          "options": {
+            "option_1": "A software development platform",
+            "option_2": "A hardware manufacturing company",
+            "option_3": "A cloud service platform offering computing power, storage, and other services",
+            "option_4": "A networking equipment provider"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Amazon Web Services (AWS) is a cloud service platform that offers computing power, analysis, content delivery, database storage, deployment, and other services to help businesses grow. These services are highly scalable, reliable, secure, and cost-effective cloud computing services designed to work together."
+        }
+      ]
+    },
+    {
+      "uuid": "f4a7fe0d-8685-4a8f-baed-adcf5c0bae63",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the principle components of AWS?",
+          "options": {
+            "option_1": "Route 53, S3, SES, IAM, EC2, EBS, CloudWatch",
+            "option_2": "EC2, S3, RDS, Lambda, CloudFront",
+            "option_3": "IAM, VPC, CloudWatch, DynamoDB, Elastic Beanstalk",
+            "option_4": "SES, EBS, Route 53, CloudFormation, SNS"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "The principle components of AWS include Route 53 (DNS service), S3 (storage service), SES (email service), IAM (identity management), EC2 (compute cloud), EBS (block storage), and CloudWatch (monitoring service)."
+        }
+      ]
+    },
+    {
+      "uuid": "fec7bd7c-a66b-4da3-bd31-bc3057445f97",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does AMI stand for in AWS?",
+          "options": {
+            "option_1": "Advanced Machine Interface",
+            "option_2": "Amazon Machine Image",
+            "option_3": "Automated Management Infrastructure",
+            "option_4": "Application Management Integration"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "AMI stands for Amazon Machine Image, which is an AWS template that provides the information (operating system, application server, applications) required to launch an instance."
+        }
+      ]
+    },
+    {
+      "uuid": "9dbde444-43d5-4d15-9ee0-bf7e91ad5d89",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is vertical scaling possible on Amazon instance?",
+          "options": {
+            "option_1": "No, only horizontal scaling is possible",
+            "option_2": "Only for specific instance types",
+            "option_3": "Yes, vertical scaling is possible",
+            "option_4": "Depends on the region"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Yes, vertical scaling is possible on Amazon instances, which means increasing the resources (CPU, RAM) of an existing instance to handle more load."
+        }
+      ]
+    },
+    {
+      "uuid": "b1b52a9f-1622-4bb2-8eca-47431dc243a6",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the relationship between AMI and Instance?",
+          "options": {
+            "option_1": "AMI is a backup of an instance",
+            "option_2": "Instances are created from AMIs",
+            "option_3": "AMI and Instance are unrelated",
+            "option_4": "Instances create AMIs"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Multiple types of instances can be launched from a single AMI. The AMI serves as a template that contains the necessary information to launch and configure an instance."
+        }
+      ]
+    },
+    {
+      "uuid": "e3733f9f-faa7-4935-a5c8-25d5ed2577eb",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the distinction between Amazon S3 and EC2?",
+          "options": {
+            "option_1": "S3 is Simple Storage Service for storing large binary files",
+            "option_2": "EC2 is Elastic Compute Cloud for hosting applications",
+            "option_3": "S3 requires running a server",
+            "option_4": "EC2 does not need a server"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Amazon S3 is a storage service for storing large binary files, while Amazon EC2 is a cloud web service used to host applications like Python, PHP, Apache, and databases."
+        }
+      ]
+    },
+    {
+      "uuid": "3ff70fc6-dc09-49c5-8eda-c3baba77e7aa",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How many storage options are there for EC2 Instance?",
+          "options": {
+            "option_1": "2 storage options",
+            "option_2": "3 storage options",
+            "option_3": "4 storage options",
+            "option_4": "5 storage options"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "There are four storage options for Amazon EC2 Instance: Amazon EBS, Amazon EC2 Instance Store, Amazon S3, and Adding Storage."
+        }
+      ]
+    },
+    {
+      "uuid": "7cdd0dd6-4237-4137-8c5f-d50679c8fe62",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the default number of buckets created in AWS?",
+          "options": {
+            "option_1": "50 buckets",
+            "option_2": "75 buckets",
+            "option_3": "100 buckets",
+            "option_4": "125 buckets"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "The default number of buckets created in each AWS account is 100."
+        }
+      ]
+    },
+    {
+      "uuid": "3f64e9e7-b5c8-4e25-9cc0-4bcaa304c4a3",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the ways to send a request to Amazon S3?",
+          "options": {
+            "option_1": "Using HTTP protocol",
+            "option_2": "Using REST API and AWS SDK Wrapper Libraries",
+            "option_3": "Using FTP",
+            "option_4": "Using email"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "There are two ways to send a request to Amazon S3: using REST API and using AWS SDK Wrapper Libraries, which wrap the REST APIs for Amazon."
+        }
+      ]
+    },
+    {
+      "uuid": "1e9e955f-8623-4e03-84c7-ce9f6ef25338",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the purpose of T2 instances?",
+          "options": {
+            "option_1": "High-performance computing",
+            "option_2": "Database management",
+            "option_3": "Providing moderate baseline performance with higher performance as needed",
+            "option_4": "Network security"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "T2 instances are designed to provide moderate baseline performance with the ability to burst to higher performance as required by the workload."
+        }
+      ]
+    },
+    {
+      "uuid": "9ed1c8d9-b04a-47d1-b029-7e46d5870a96",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What happens when an Amazon EC2 occurrence is halted or ended?",
+          "options": {
+            "option_1": "All EBS volumes are immediately deleted",
+            "option_2": "The instance can be started again immediately",
+            "option_3": "The instance is permanently terminated",
+            "option_4": "Billing continues as normal"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "When an Amazon EC2 instance is halted, most Amazon EBS volumes remain attached to the instance, and the instance can be started again at any time. During the stopped state, instance hours are not counted for billing."
+        }
+      ]
+    },
+    {
+      "uuid": "7b0e6720-6f8c-42ef-a2fe-3da2f39e50e1",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the mainstream DevOps tools?",
+          "options": {
+            "option_1": "Microsoft Office, Slack, Trello",
+            "option_2": "Jenkins, Git, Nagios, Selenium, Docker, Puppet/Chef/Ansible",
+            "option_3": "Excel, PowerPoint, Word",
+            "option_4": "Chrome, Firefox, Safari"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "The mainstream DevOps tools include Jenkins (Continuous Integration), Git (Version Control), Nagios (Continuous Monitoring), Selenium (Continuous Testing), Docker (Containerization), and Puppet/Chef/Ansible (Deployment and Configuration Management)."
+        }
+      ]
+    },
+    {
+      "uuid": "f71c586e-22f9-416e-8a95-16f0a840d377",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the difference between IAM Roles and Policies?",
+          "options": {
+            "option_1": "Roles and Policies are the same thing",
+            "option_2": "Roles are for users, Policies are for services",
+            "option_3": "Roles are for AWS services, Policies are for users and groups",
+            "option_4": "Roles have no specific purpose"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "IAM Roles are used to assign permissions to AWS services (e.g., giving EC2 permission to access S3 bucket), while Policies are used to assign permissions to users and groups (e.g., giving a user access to S3 buckets)."
+        }
+      ]
+    },
+    {
+      "uuid": "99b18430-20fd-47af-a46b-ef5d7e1a4a66",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the default services when creating a custom AWS VPC?",
+          "options": {
+            "option_1": "Load Balancer, CloudWatch, S3",
+            "option_2": "Route Table, Network ACL, Security Group",
+            "option_3": "EC2, RDS, ElastiCache",
+            "option_4": "VPN, Direct Connect, Transit Gateway"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "When creating a custom AWS VPC, the default services are Route Table, Network ACL, and Security Group."
+        }
+      ]
+    },
+    {
+      "uuid": "2651a734-a173-4659-92c5-ad01587b7cdf",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the difference between Public and Private Subnet?",
+          "options": {
+            "option_1": "Public subnets cost more than private subnets",
+            "option_2": "Public subnets have more security",
+            "option_3": "Public subnet has Internet Gateway attached, Private subnet does not",
+            "option_4": "There is no difference between public and private subnets"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "A Public Subnet has an Internet Gateway attached to its route table, providing direct internet access. A Private Subnet does not have an Internet Gateway and does not have direct internet access."
+        }
+      ]
+    },
+    {
+      "uuid": "5bd8c38b-0a2b-4201-ac26-9803951724f8",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the Difference Between Route53 and ELB?",
+          "options": {
+            "option_1": "Route53 handles DNS servers and traffic routing",
+            "option_2": "ELB automatically scales based on demand",
+            "option_3": "Route53 provides health checks and failover",
+            "option_4": "Both A and C"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "Route53 handles DNS servers, provides traffic routing through DNS Routing Policy, and offers failover routing with health checks. ELB automatically scales based on traffic demand."
+        }
+      ]
+    },
+    {
+      "uuid": "1f80262c-7a8a-460e-9796-845b0ce49668",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the DB engines which can be used in AWS RDS?",
+          "options": {
+            "option_1": "MariaDB",
+            "option_2": "MySQL DB",
+            "option_3": "MS SQL DB",
+            "option_4": "All of the above"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "AWS RDS supports multiple database engines including MariaDB, MySQL DB, MS SQL DB, PostgreDB, and Oracle DB."
+        }
+      ]
+    },
+    {
+      "uuid": "6885c95e-69d4-4990-a51f-87dbdfc05edf",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the Status Checks in AWS EC2?",
+          "options": {
+            "option_1": "System Status Checks",
+            "option_2": "Instance Status Checks",
+            "option_3": "Both System and Instance Status Checks",
+            "option_4": "Neither System nor Instance Status Checks"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "AWS EC2 has two types of status checks: System Status Checks (which look into problems needing AWS help) and Instance Status Checks (which look into issues requiring user involvement)."
+        }
+      ]
+    },
+    {
+      "uuid": "2ed313d6-7760-4b88-b418-7f1df6134ca9",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "To establish a peering connection between two VPCs, what conditions must be met?",
+          "options": {
+            "option_1": "CIDR blocks must overlap",
+            "option_2": "CIDR blocks should not overlap",
+            "option_3": "VPC must be in the same region and account",
+            "option_4": "Both B and C"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "For VPC peering, CIDR blocks should not overlap, and the VPCs can be in the same region, across regions, and across different accounts."
+        }
+      ]
+    },
+    {
+      "uuid": "a0f0f779-3a62-4b09-9e9e-c76af1321e51",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the maximum number of buckets that can be created in AWS by default?",
+          "options": {
+            "option_1": "50 buckets",
+            "option_2": "75 buckets",
+            "option_3": "100 buckets",
+            "option_4": "200 buckets"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "By default, 100 buckets can be created in an AWS account. To create additional buckets, you must request permission from Amazon."
+        }
+      ]
+    },
+    {
+      "uuid": "4d6ff0ce-8fe4-4c24-a007-e525f6b41330",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What is the Difference between the Service Role and SAML Federated Role?",
+          "options": {
+            "option_1": "Service Roles are for AWS Services automation",
+            "option_2": "Federated Roles are for User Access from corporate directory",
+            "option_3": "Service Roles have no policy restrictions",
+            "option_4": "Federated Roles can only be used by root users"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Federated Roles are meant for User Access and getting access to AWS as per designed role, typically created for office employees and mapped to Active Directory groups."
+        }
+      ]
+    },
+    {
+      "uuid": "32877cb7-5320-4720-9882-d7e5ffe99f74",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How many Policies can be attached to a role?",
+          "options": {
+            "option_1": "5",
+            "option_2": "15",
+            "option_3": "10",
+            "option_4": "20"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "10 is the soft limit for policies that can be attached to a role, with a maximum possible limit of 20."
+        }
+      ]
+    },
+    {
+      "uuid": "5f8f7e46-ec00-428b-b8bc-464d88e6f8ea",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What are the different ways to access AWS?",
+          "options": {
+            "option_1": "Console only",
+            "option_2": "CLI and Console",
+            "option_3": "SDK only",
+            "option_4": "CLI, Console, and SDK"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "There are 3 different ways to access AWS: Command Line Interface (CLI), Management Console, and Software Development Kit (SDK)."
+        }
+      ]
+    },
+    {
+      "uuid": "d16084df-5766-4624-af18-e4fc5c0f79b7",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "How is a Root AWS user different from an IAM User?",
+          "options": {
+            "option_1": "Root user has limited access",
+            "option_2": "IAM user has full AWS environment access",
+            "option_3": "Root user has access to entire AWS environment with no policy restrictions",
+            "option_4": "IAM users cannot be customized"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Root User will have access to entire AWS environment and it will not have any policy attached to it, while IAM User's permissions are defined by attached policies."
+        }
+      ]
+    },
+    {
+      "uuid": "cbc3382f-1915-42aa-97a2-1850b9aa4fff",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "What does the Principal of Least Privilege mean in IAM?",
+          "options": {
+            "option_1": "Providing maximum permissions",
+            "option_2": "Providing no permissions",
+            "option_3": "Providing the same or equivalent permission to the user/role",
+            "option_4": "Providing random permissions"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Principal of least privilege means to provide only the necessary or equivalent permissions required for a user/role to perform their specific tasks."
+        }
+      ]
+    },
+    {
+      "uuid": "adb76f98-916c-4613-9f50-01d27d68b9ea",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is simple workflow service one of the valid Simple Notification Service subscribers?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "Simple Workflow Service is not a valid subscriber to Simple Notification Service. These are separate AWS services with different purposes."
+        }
+      ]
+    },
+    {
+      "uuid": "41f8e640-dbd8-4794-b88a-3d84a60bb154",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which cloud model do Developers and organizations all around the world leverage extensively?",
+          "options": {
+            "option_1": "SAAS",
+            "option_2": "PAAS",
+            "option_3": "IAAS-Infrastructure as a service",
+            "option_4": "CAAS"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "IAAS (Infrastructure as a Service) is the cloud model most widely used by developers and organizations, providing scalable and flexible cloud computing infrastructure."
+        }
+      ]
+    },
+    {
+      "uuid": "a62ae6a9-cacf-4b91-bb02-39011cea492e",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Can cloud front serve content from a non AWS origin server?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_2"
+          ],
+          "explanation": "CloudFront is primarily designed to serve content from AWS origins, and does not support serving content directly from non-AWS origin servers."
+        }
+      ]
+    },
+    {
+      "uuid": "17299fe7-1693-4b56-bc90-bb984579ccca",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Is EFS a centralised storage service in AWS?",
+          "options": {
+            "option_1": "Yes",
+            "option_2": "No"
+          },
+          "correctAnswer": [
+            "option_1"
+          ],
+          "explanation": "EFS (Elastic File System) is a centralized, scalable, and fully managed file storage service in AWS that can be used across multiple AWS services and instances."
+        }
+      ]
+    },
+    {
+      "uuid": "7293de74-f54b-4e10-8a99-72b977287436",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "Which AWS service will you use to collect and process ecommerce data for near real time analysis?",
+          "options": {
+            "option_1": "DynamoDB",
+            "option_2": "Redshift",
+            "option_3": "Both Dynamo DB & Redshift",
+            "option_4": "Neither"
+          },
+          "correctAnswer": [
+            "option_3"
+          ],
+          "explanation": "Both DynamoDB and Redshift can be used for collecting and processing ecommerce data. DynamoDB provides real-time data processing, while Redshift offers powerful data warehousing and analytics capabilities."
+        }
+      ]
+    },
+    {
+      "uuid": "4ecbea72-4c99-4ca5-af56-bbd8a9011dfd",
+      "questionType": "single-choice",
+      "difficulty": "medium",
+      "points": 1,
+      "translations": [
+        {
+          "languageCode": "en",
+          "questionText": "An high demand of IOPS performance is expected around 15000. Which EBS volume type would you recommend?",
+          "options": {
+            "option_1": "General Purpose SSD",
+            "option_2": "Cold HDD",
+            "option_3": "Throughput Optimized HDD",
+            "option_4": "Provisioned IOPS"
+          },
+          "correctAnswer": [
+            "option_4"
+          ],
+          "explanation": "Provisioned IOPS (Input/Output Operations Per Second) EBS volume type is specifically designed for workloads that require high and consistent I/O performance, making it ideal for scenarios demanding around 15000 IOPS."
+        }
+      ]
+    }
+  ]
+}
